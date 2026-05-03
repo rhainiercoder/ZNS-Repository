@@ -1,0 +1,12 @@
+# Ignore secrets
+config.php
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs (if any)
+*.log
+
+hash.php

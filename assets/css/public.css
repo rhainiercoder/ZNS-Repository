@@ -1,0 +1,115 @@
+/* ==========================================================
+   public.css — Shared public-page header (.topnav) and
+                general public layout helpers.
+   Included by: landing pages, login, signup.
+========================================================== */
+
+/* ── Shared public header ── */
+.topnav {
+  background: var(--soft-grad-2);
+  padding: 18px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+.topnav__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.topnav__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  color: inherit;
+}
+
+.topnav__brandImg {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.topnav__brandTitle {
+  display: block;
+  font-size: 15px;
+  color: #2a2a2a;
+  font-weight: 700;
+}
+
+.topnav__brandSub {
+  display: block;
+  font-size: 12px;
+  color: #8a8a8a;
+}
+
+/* ── Nav links ── */
+.topnav__links {
+  display: flex;
+  gap: 26px;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 600;
+  align-items: center;
+}
+
+.topnav__link {
+  text-decoration: none;
+  color: #2b2b2b;
+}
+
+.topnav__link:hover,
+.topnav__link.is-active {
+  color: var(--blue);
+}
+
+/* ── Action buttons ── */
+.topnav__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.topnav__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.topnav__btn--ghost {
+  background: #fff;
+  color: var(--blue);
+  border: 1px solid #d7e3ff;
+}
+
+.topnav__btn--primary {
+  background: var(--cta-grad);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(47, 99, 224, .2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .topnav__links {
+    display: none;
+  }
+}
