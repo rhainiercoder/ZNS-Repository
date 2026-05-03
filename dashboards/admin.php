@@ -123,6 +123,26 @@ if (!empty($_GET['ym']) && preg_match('/^\d{4}-\d{1,2}$/', $_GET['ym'])) {
     $year  = (int)date('Y');
     $month = (int)date('n');
 }
+// --- Appointment counts for this month (approved + pending) ---
+$apptCountByDate = []; // ['YYYY-MM-DD' => 3]
+try {
+    $stmt = $conn->prepare("
+      SELECT appointment_date, COUNT(*) AS c
+      FROM appointments
+      WHERE YEAR(appointment_date) = ?
+        AND MONTH(appointment_date) = ?
+        AND status IN ('approved','pending')
+      GROUP BY appointment_date
+    ");
+    $stmt->bind_param("ii", $year, $month);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($r = $res->fetch_assoc()) {
+        $apptCountByDate[$r['appointment_date']] = (int)$r['c'];
+    }
+} catch (Exception $e) {
+    $apptCountByDate = [];
+}
 $firstOfMonth = new DateTime(sprintf('%04d-%02d-01', $year, $month));
 $monthDays = (int)$firstOfMonth->format('t'); // days in month
 
@@ -203,6 +223,8 @@ try {
   <meta charset="utf-8" />
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 </head>
 <body>
   <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -290,23 +312,34 @@ try {
     </section>
 
     <!-- Dentist Schedule -->
+
+      <div id="adminCalendar"></div>
+    </div>
     <section class="card adminSchedule">
-      <div class="adminSchedule__head">
-        <h2 class="adminSchedule__title">Dentist Schedule</h2>
+  <div class="adminSchedule__layout">
+    <!-- LEFT -->
+    <div class="adminSchedule__left">
+      <h2 class="adminSchedule__title">Dentist Schedule</h2>
 
-        <div class="legend">
-          <span class="legend__item"><span class="dot dot--green"></span>On Duty</span>
-          <span class="legend__item"><span class="dot dot--red"></span>Off Duty</span>
-          <span class="legend__item"><span class="dot dot--orange"></span>Holiday</span>
-        </div>
-      </div>
-
+    <!-- RIGHT -->
+    <div class="adminSchedule__right">
       <div class="calendar">
         <div class="calendar__bar">
+        <div class="calendar__barLeft">
           <a class="calendar__nav" href="?ym=<?php echo h($prev_ym); ?>" aria-label="Previous month">‹</a>
           <div class="calendar__month"><?php echo h($firstOfMonth->format('F Y')); ?></div>
           <a class="calendar__nav" href="?ym=<?php echo h($next_ym); ?>" aria-label="Next month">›</a>
         </div>
+
+        <div class="calendar__barRight">
+          <div class="legend legend--row legend--compact">
+            <span class="legend__item"><span class="dot dot--blue"></span>Appointments</span>
+            <span class="legend__item"><span class="dot dot--green"></span>On Duty</span>
+            <span class="legend__item"><span class="dot dot--red"></span>Off Duty</span>
+            <span class="legend__item"><span class="dot dot--orange"></span>Holiday</span>
+          </div>
+        </div>
+      </div>
 
         <div class="calendar__dow">
           <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
@@ -317,7 +350,8 @@ try {
           // build cells Sun..Sat for the month (include leading blanks)
           $startWeekday = (int)$firstOfMonth->format('w'); // 0 (Sun) .. 6 (Sat)
           $cells = [];
-          for ($i=0; $i < $startWeekday; $i++) $cells[] = null;
+
+          for ($i = 0; $i < $startWeekday; $i++) $cells[] = null;
           for ($d = 1; $d <= $monthDays; $d++) $cells[] = $d;
 
           foreach ($cells as $cell) {
@@ -325,47 +359,37 @@ try {
                   echo '<div></div>';
                   continue;
               }
+
               $dateStr = sprintf("%04d-%02d-%02d", (int)$year, (int)$month, $cell);
-              $weekday = (int)date('N', strtotime($dateStr)); // 1..7 Mon..Sun
+              $weekday = (int)date('N', strtotime($dateStr)); // 1..7 (Mon..Sun)
               $isHoliday = !empty($holidays[$dateStr]);
               $availCount = $availByWeekday[$weekday] ?? 0;
-              $cls = $isHoliday ? 'orange' : ($availCount > 0 ? 'green' : 'red');
-              echo '<div class="day day--' . $cls . '">' . $cell . '</div>';
+
+              // Force Sunday off duty (RED)
+              $isSunday = ((int)date('w', strtotime($dateStr)) === 0); // 0 = Sunday
+
+              if ($isSunday) {
+                  $cls = 'red';
+              } else {
+                  $cls = $isHoliday ? 'orange' : ($availCount > 0 ? 'green' : 'red');
+              }
+
+              $apptCount = (int)($apptCountByDate[$dateStr] ?? 0);
+
+              echo '<div class="day day--' . $cls . '">';
+              echo   '<div class="day__num">' . $cell . '</div>';
+              if ($apptCount > 0) {
+                  echo '<div class="day__apptBadge">' . $apptCount . '</div>';
+              }
+              echo '</div>';
           }
           ?>
         </div>
 
         <div class="calendar__note">Reminder: Arrive 1 Hour Early</div>
       </div>
-    </section>
-
-    <!-- Recent Transactions -->
-     <section class="card" style="background:#e9f7ff; margin-top:14px;">
-  <div class="adminTransactions__head">
-    <h2 class="adminTransactions__title">Income per Dentist</h2>
-  </div>
-
-  <?php if (!$incomeByDentist): ?>
-    <div style="padding:14px; font-weight:800; opacity:.8;">No dentist income data yet.</div>
-  <?php else: ?>
-    <div class="table">
-      <div class="table__row table__row--head" style="grid-template-columns: 1.1fr .8fr .7fr .7fr;">
-        <div>Dentist</div>
-        <div style="text-align:right;">Income</div>
-        <div style="text-align:right;">Appointments</div>
-        <div style="text-align:right;">Patients</div>
-      </div>
-
-      <?php foreach ($incomeByDentist as $d): ?>
-        <div class="table__row" style="grid-template-columns: 1.1fr .8fr .7fr .7fr;">
-          <div style="font-weight:900; color:#0b2f4f;"><?php echo h($d['dentist_name']); ?></div>
-          <div class="table__right" style="font-weight:900;">₱<?php echo number_format((float)$d['total_income'], 2); ?></div>
-          <div class="table__right" style="font-weight:900;"><?php echo (int)$d['total_appointments']; ?></div>
-          <div class="table__right" style="font-weight:900;"><?php echo (int)$d['unique_patients']; ?></div>
-        </div>
-      <?php endforeach; ?>
     </div>
-  <?php endif; ?>
+  </div>
 </section>
     <section class="card adminTransactions">
       <div class="adminTransactions__head">
@@ -400,5 +424,80 @@ try {
       </div>
     </section>
   </main>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('adminCalendar');
+
+  var themeBlue = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim() || '#2f63e0';
+
+var calendar = new FullCalendar.Calendar(calendarEl, {
+  initialView: 'dayGridMonth',
+  headerToolbar: {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+  },
+  height: 700,
+  nowIndicator: true,
+  navLinks: true,
+  timeZone: 'local',
+  events: '/qm/pages/api/calendar_appointments.php',
+
+  displayEventTime: true,
+  eventDisplay: 'block',
+  dayMaxEvents: true,
+
+  eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+
+  // Sunday off shading (keep your datesSet code)
+    businessHours: {
+      daysOfWeek: [1, 2, 3, 4, 5, 6] // Monday..Saturday; Sunday excluded
+    },
+    dayMaxEventRows: true,
+    displayEventTime: true,
+    eventDidMount: function(info) {
+      info.el.style.cursor = 'pointer';
+    },
+    eventClick: function(info) {
+      info.jsEvent.preventDefault();
+      // open the URL in a new tab if event contains a URL
+      if (info.event.url) {
+        window.open(info.event.url, '_blank');
+      }
+    },
+    datesSet: function(dateInfo) {
+  var src = calendar.getEventSourceById && calendar.getEventSourceById('sundays-bg');
+  if (src) src.remove();
+
+  var start = new Date(dateInfo.start);
+  var end = new Date(dateInfo.end);
+  var bgEvents = [];
+
+  // normalize time to midnight para di pumalya timezone
+  start.setHours(0,0,0,0);
+
+  for (var d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    if (d.getDay() === 0) { // Sunday
+      var iso = d.toISOString().slice(0, 10);
+
+      bgEvents.push({
+        start: iso,
+        end: iso, // FullCalendar treats background event as whole day for dayGrid
+        allDay: true,
+        display: 'background',
+        backgroundColor: '#eef4ff'
+      });
+    }
+  }
+
+  if (bgEvents.length) {
+    calendar.addEventSource({ id: 'sundays-bg', events: bgEvents });
+  }
+}
+  });
+
+  calendar.render();
+});
+</script>
 </body>
 </html>

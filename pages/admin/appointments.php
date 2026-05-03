@@ -7,6 +7,8 @@ $active = "appointments";
 require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
+$patient_id = (int)($_GET['patient_id'] ?? 0);
+
 // Load dentists (users with role = dentist)
 $dentists = $conn->query("
   SELECT id, name, email
@@ -47,8 +49,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $dentist_id = (int)($_POST["dentist_id"] ?? 0);
       if ($dentist_id <= 0) {
         // simple fail-safe: redirect with no change
-        header("Location: /qm/pages/admin/appointments.php?err=choose_dentist");
-        exit;
+        $redirect = "/qm/pages/admin/appointments.php";
+          if (!empty($_POST["patient_id"])) {
+            $redirect .= "?patient_id=" . (int)$_POST["patient_id"];
+          }
+          header("Location: " . $redirect);
+          exit;
       }
 
       $stmt = $conn->prepare("UPDATE appointments SET status='approved', dentist_id=? WHERE id=?");
@@ -72,25 +78,51 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // List appointments
-$res = $conn->query("
-  SELECT
-    a.id,
-    a.appointment_date,
-    a.appointment_time,
-    a.status,
-    a.dentist_id,
-    u.name AS patient_name,
-    u.email AS patient_email,
-    s.name AS service
-  FROM appointments a
-  JOIN users u ON u.id = a.patient_id
-  JOIN services s ON s.id = a.service_id
-  ORDER BY
-    (a.status='pending') DESC,
-    a.appointment_date ASC,
-    a.appointment_time ASC
-");
-$rows = $res->fetch_all(MYSQLI_ASSOC);
+$patientRows = [];
+$rows = [];
+
+if ($patient_id === 0) {
+  // COMPILED: list patients with appointment counts (pending+approved)
+  $res = $conn->query("
+    SELECT
+      u.id AS patient_id,
+      u.name AS patient_name,
+      u.email AS patient_email,
+      u.phone AS patient_phone,
+      COUNT(a.id) AS appt_count,
+      MAX(CONCAT(a.appointment_date,' ',a.appointment_time)) AS last_appt
+    FROM appointments a
+    JOIN users u ON u.id = a.patient_id
+    WHERE a.status IN ('pending','approved')
+    GROUP BY u.id
+    ORDER BY last_appt DESC, u.name ASC
+  ");
+  $patientRows = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
+} else {
+  // PATIENT VIEW: list appointments for one patient
+  $stmt = $conn->prepare("
+    SELECT
+      a.id,
+      a.appointment_date,
+      a.appointment_time,
+      a.status,
+      a.dentist_id,
+      u.name AS patient_name,
+      u.email AS patient_email,
+      s.name AS service
+    FROM appointments a
+    JOIN users u ON u.id = a.patient_id
+    JOIN services s ON s.id = a.service_id
+    WHERE a.patient_id = ?
+    ORDER BY
+      (a.status='pending') DESC,
+      a.appointment_date ASC,
+      a.appointment_time ASC
+  ");
+  $stmt->bind_param("i", $patient_id);
+  $stmt->execute();
+  $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
 
 $err = $_GET["err"] ?? "";
 ?>
@@ -105,7 +137,15 @@ $err = $_GET["err"] ?? "";
 <?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
-  <div class="pageHead"><h1 class="pageHead__title">Appointments</h1></div>
+<div class="pageHead" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+  <h1 class="pageHead__title">
+    <?php echo $patient_id ? "Appointments (Patient)" : "Appointments (Patients)"; ?>
+  </h1>
+
+  <?php if ($patient_id): ?>
+    <a class="btn light" href="/qm/pages/admin/appointments.php">Back to Patients</a>
+  <?php endif; ?>
+</div>
 
   <?php if ($err === "choose_dentist"): ?>
     <div class="card" style="background:#ffe9e9; margin-bottom:12px; font-weight:800;">
@@ -120,6 +160,53 @@ $err = $_GET["err"] ?? "";
   <?php endif; ?>
 
   <section class="card" style="background:#e9f7ff;">
+  <?php if ($patient_id === 0): ?>
+
+    <h2 class="sectionTitle">Manage Appointments (Patients)</h2>
+
+    <div class="table">
+      <div class="table__row table__row--head" style="grid-template-columns: 1.1fr .9fr .6fr .6fr;">
+        <div>Patient</div>
+        <div>Contact</div>
+        <div>Appointments</div>
+        <div style="text-align:right;">Action</div>
+      </div>
+
+      <?php foreach ($patientRows as $p): ?>
+        <div class="table__row" style="grid-template-columns: 1.1fr .9fr .6fr .6fr;">
+          <div>
+            <div style="font-weight:900; color:#0b2f4f;"><?php echo h($p["patient_name"]); ?></div>
+          </div>
+
+          <div style="font-size:12px; font-weight:800; opacity:.75;">
+            <div><?php echo h($p["patient_phone"] ?? "—"); ?></div>
+            <div><?php echo h($p["patient_email"] ?? "—"); ?></div>
+          </div>
+
+          <div>
+            <div style="font-weight:900;"><?php echo (int)$p["appt_count"]; ?></div>
+            <div style="font-size:12px; font-weight:800; opacity:.75;">
+              <?php echo !empty($p["last_appt"]) ? h(substr($p["last_appt"], 0, 10)) : "—"; ?>
+            </div>
+          </div>
+
+          <div style="text-align:right;">
+            <a class="btn light" href="/qm/pages/admin/appointments.php?patient_id=<?php echo (int)$p["patient_id"]; ?>">
+              View Appointments
+            </a>
+          </div>
+        </div>
+      <?php endforeach; ?>
+
+      <?php if (!$patientRows): ?>
+        <div class="table__row">
+          <div style="grid-column:1 / -1; font-weight:800; opacity:.7;">No appointments yet.</div>
+        </div>
+      <?php endif; ?>
+    </div>
+
+  <?php else: ?>
+
     <h2 class="sectionTitle">Manage Appointments</h2>
 
     <div class="table">
@@ -142,14 +229,13 @@ $err = $_GET["err"] ?? "";
 
           <div class="table__right">
             <?php if ($r["status"] === "pending"): ?>
+              <!-- YOUR ORIGINAL APPROVE/DECLINE FORM (UNCHANGED) -->
               <form method="post" style="display:flex; gap:8px; justify-content:flex-end; align-items:center; flex-wrap:wrap;">
                 <input type="hidden" name="id" value="<?php echo (int)$r["id"]; ?>">
 
                 <?php
-                  // Compute weekday for appointment date: 1=Mon ... 7=Sun
                   $weekday = (int)date('N', strtotime($r['appointment_date']));
 
-                  // If availabilityMap is empty, we don't have availability data -> show all dentists.
                   $available = [];
                   $unavailable = [];
                   foreach ($dentists as $d) {
@@ -181,7 +267,7 @@ $err = $_GET["err"] ?? "";
                     </optgroup>
                   <?php endif; ?>
 
-                  <?php if (!empty($availabilityMap)): // only show off-duty group if we actually have schedule data ?>
+                  <?php if (!empty($availabilityMap)): ?>
                     <?php if ($unavailable): ?>
                       <optgroup label="Off duty">
                         <?php foreach ($unavailable as $d): ?>
@@ -228,7 +314,9 @@ $err = $_GET["err"] ?? "";
         </div>
       <?php endif; ?>
     </div>
-  </section>
+
+  <?php endif; ?>
+</section>
 </main>
 </body>
 </html>

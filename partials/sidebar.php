@@ -25,6 +25,7 @@ function active_class(string $key, string $active): string {
       <a class="sidebar__link<?php echo active_class("transactions", $active); ?>" href="/qm/pages/admin/transactions.php">Transactions</a>
       <a class="sidebar__link<?php echo active_class("reports", $active); ?>" href="/qm/pages/admin/reports.php">Reports</a>
       <a class="sidebar__link<?php echo active_class("location", $active); ?>" href="/qm/pages/admin/location.php">Location &amp; Map</a>
+       <a class="sidebar__link<?php echo active_class("settings", $active); ?>" href="/qm/pages/admin/settings_services.php">Services</a>
       <a class="sidebar__link<?php echo active_class("settings", $active); ?>" href="/qm/pages/admin/settings.php">Settings</a>
 
     <?php elseif ($role === "dentist"): ?>

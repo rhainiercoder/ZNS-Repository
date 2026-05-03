@@ -84,6 +84,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && empty($_POST["action"])) {
     $stmt->bind_param("iisss", $user["id"], $service_id, $date, $time, $note);
     $stmt->execute();
     $success = "Appointment request submitted (pending approval).";
+    $appointment_date = $_POST['appointment_date'] ?? '';
+    if ($appointment_date) {
+      $dow = (int)date('w', strtotime($appointment_date)); // 0 = Sunday
+      if ($dow === 0) {
+        $error = "Sunday is off duty. Please choose another day.";
+        // stop insert:
+        // - if you redirect: header("Location: ...?err=sunday"); exit;
+        // - if you show inline: just don't run INSERT when $error is set
+      }
+    }
   }
 }
 
@@ -253,5 +263,29 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 })();
 </script>
 </main>
+<script>
+(function(){
+  const dateInput = document.querySelector('input[name="appointment_date"]');
+  const err = document.getElementById('dateError');
+  if (!dateInput) return;
+
+  function isSunday(dateStr){
+    // dateStr = YYYY-MM-DD
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.getDay() === 0; // 0=Sunday
+  }
+
+  dateInput.addEventListener('change', function(){
+    if (!this.value) return;
+    if (isSunday(this.value)) {
+      this.value = '';
+      if (err) err.style.display = 'block';
+      alert('Sunday is off duty. Please choose another day.');
+    } else {
+      if (err) err.style.display = 'none';
+    }
+  });
+})();
+</script>
 </body>
 </html>

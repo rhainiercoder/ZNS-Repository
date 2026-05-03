@@ -1,68 +1,15 @@
 <?php
+// pages/admin/dental-records.php
 require_once __DIR__ . "/../../auth.php";
-$user = require_role(["admin"]);
+$user = require_role(["admin", "staff", "dentist"]);
 $role = $user["role"];
-$active = "dental-records";
 
 require_once __DIR__ . "/../../db.php";
+
 function h($v){ return htmlspecialchars((string)$v); }
 
-$q = trim($_GET["q"] ?? "");
+$patient_id = (int)($_GET['patient_id'] ?? 0);
 
-// Optional search by patient/dentist/service
-if ($q !== "") {
-  $like = "%".$q."%";
-  $stmt = $conn->prepare("
-    SELECT
-      dr.id,
-      dr.created_at,
-      dr.diagnosis,
-      dr.treatment,
-      dr.prescription,
-      dr.notes,
-
-      a.appointment_date,
-      a.appointment_time,
-
-      s.name AS service,
-      p.name AS patient_name,
-      d.name AS dentist_name
-    FROM dental_records dr
-    JOIN appointments a ON a.id = dr.appointment_id
-    JOIN services s ON s.id = a.service_id
-    JOIN users p ON p.id = dr.patient_id
-    LEFT JOIN users d ON d.id = dr.dentist_id
-    WHERE p.name LIKE ? OR d.name LIKE ? OR s.name LIKE ?
-    ORDER BY dr.created_at DESC
-  ");
-  $stmt->bind_param("sss", $like, $like, $like);
-} else {
-  $stmt = $conn->prepare("
-    SELECT
-      dr.id,
-      dr.created_at,
-      dr.diagnosis,
-      dr.treatment,
-      dr.prescription,
-      dr.notes,
-
-      a.appointment_date,
-      a.appointment_time,
-
-      s.name AS service,
-      p.name AS patient_name,
-      d.name AS dentist_name
-    FROM dental_records dr
-    JOIN appointments a ON a.id = dr.appointment_id
-    JOIN services s ON s.id = a.service_id
-    JOIN users p ON p.id = dr.patient_id
-    LEFT JOIN users d ON d.id = dr.dentist_id
-    ORDER BY dr.created_at DESC
-  ");
-}
-
-$stmt->execute();
-$records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <!doctype html>
 <html>
@@ -76,61 +23,140 @@ $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <main class="main">
   <div class="pageHead">
-    <h1 class="pageHead__title">Dental Records</h1>
-
-    <form method="get" style="display:flex; gap:10px; align-items:center;">
-      <input
-        name="q"
-        value="<?php echo h($q); ?>"
-        placeholder="Search patient, dentist, service..."
-        style="padding:10px 12px; border-radius:12px; border:1px solid rgba(11,31,42,.15); width:min(360px, 48vw); font-weight:800;"
-      />
-      <button class="btn btn--dark" type="submit">Search</button>
-    </form>
+    <?php if ($patient_id === 0): ?>
+      <h1 class="pageHead__title">Dental Records (Patients)</h1>
+      <p class="pageHead__lead">Click "View Records" to see full dental records for a patient.</p>
+    <?php else: ?>
+      <?php
+        // fetch patient name for header
+        $s = $conn->prepare("SELECT id, name, phone, email FROM users WHERE id = ? LIMIT 1");
+        $s->bind_param("i", $patient_id);
+        $s->execute();
+        $patient = $s->get_result()->fetch_assoc();
+      ?>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h1 class="pageHead__title">Records for <?php echo h($patient['name'] ?? 'Unknown'); ?></h1>
+          <div style="color:#6f7b86;">Phone: <?php echo h($patient['phone'] ?? '—'); ?> — Email: <?php echo h($patient['email'] ?? '—'); ?></div>
+        </div>
+        <div>
+          <a class="btn" href="/qm/pages/admin/dental-records.php">Back to Patients</a>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 
-  <section class="card" style="background:#e9f7ff;">
-    <div class="table">
-      <div class="table__row table__row--head" style="grid-template-columns: 1.25fr .9fr .9fr .6fr;">
-        <div>Patient / Service</div>
-        <div>Dentist</div>
-        <div>Date/Time</div>
-        <div style="text-align:right;">Created</div>
-      </div>
+  <?php if ($patient_id === 0): ?>
+    <!-- LIST OF PATIENTS WITH RECORD COUNTS -->
+    <section class="card">
+      <div class="table">
+        <div class="table__row table__row--head" style="grid-template-columns: 1fr .6fr .6fr .5fr;">
+          <div>Patient</div>
+          <div>Contact</div>
+          <div>Records</div>
+          <div style="text-align:right;">Action</div>
+        </div>
 
-      <?php foreach ($records as $r): ?>
-        <div class="table__row" style="grid-template-columns: 1.25fr .9fr .9fr .6fr;">
-          <div>
-            <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r["patient_name"]); ?></div>
-            <div style="font-size:12px; font-weight:900; opacity:.75;">
-              <?php echo h($r["service"]); ?>
-              <?php if (!empty($r["diagnosis"])): ?>
-                • Dx: <?php echo h($r["diagnosis"]); ?>
-              <?php endif; ?>
+        <?php
+        // Query: patients who have dental_records via appointments
+        $q = "
+          SELECT u.id AS patient_id, u.name, u.phone, u.email,
+                 COUNT(dr.id) AS records_count,
+                 MAX(dr.created_at) AS last_record
+          FROM dental_records dr
+          JOIN appointments a ON a.id = dr.appointment_id
+          JOIN users u ON u.id = a.patient_id
+          GROUP BY u.id
+          ORDER BY last_record DESC, u.name ASC
+        ";
+        $res = $conn->query($q);
+        while ($row = $res->fetch_assoc()):
+        ?>
+          <div class="table__row" style="grid-template-columns: 1fr .6fr .6fr .5fr;">
+            <div>
+              <div style="font-weight:900; color:#0b2f4f;"><?php echo h($row['name']); ?></div>
+            </div>
+            <div>
+              <div style="font-size:13px; color:#6f7b86;"><?php echo h($row['phone'] ?: '—'); ?></div>
+              <div style="font-size:12px; color:#8a8a8a;"><?php echo h($row['email'] ?: '—'); ?></div>
+            </div>
+            <div>
+              <div style="font-weight:800;"><?php echo (int)$row['records_count']; ?></div>
+              <div style="font-size:13px; color:#6f7b86;"><?php echo $row['last_record'] ? h(substr($row['last_record'],0,10)) : '—'; ?></div>
+            </div>
+            <div style="text-align:right;">
+              <a class="btn light" href="/qm/pages/admin/dental-records.php?patient_id=<?php echo (int)$row['patient_id']; ?>">View Records</a>
             </div>
           </div>
+        <?php endwhile; ?>
+      </div>
+    </section>
 
-          <div class="table__muted"><?php echo h($r["dentist_name"] ?: "—"); ?></div>
+  <?php else: ?>
+    <!-- SHOW ALL RECORDS FOR A SPECIFIC PATIENT -->
+    <section class="card">
+      <?php
+      // Fetch all dental_records for this patient (joining appointments for service/dentist info)
+      $stmt = $conn->prepare("
+        SELECT dr.id AS record_id,
+               dr.created_at AS created_at,
+               dr.diagnosis, dr.treatment, dr.prescription, dr.notes,
+               a.appointment_date, a.appointment_time,
+               s.name AS service,
+               d.name AS dentist_name
+        FROM dental_records dr
+        JOIN appointments a ON a.id = dr.appointment_id
+        JOIN services s ON s.id = a.service_id
+        LEFT JOIN users d ON d.id = dr.dentist_id
+        WHERE a.patient_id = ?
+        ORDER BY dr.created_at DESC
+      ");
+      $stmt->bind_param("i", $patient_id);
+      $stmt->execute();
+      $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+      ?>
 
-          <div class="table__muted">
-            <?php echo h($r["appointment_date"]); ?> <?php echo h(substr($r["appointment_time"],0,5)); ?>
-          </div>
+      <?php if (empty($records)): ?>
+        <div>No dental records found for this patient.</div>
+      <?php else: ?>
 
-          <div class="table__right" style="font-weight:900;">
-            <?php echo h(date("Y-m-d", strtotime($r["created_at"]))); ?>
-          </div>
+        <div style="margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap;">
+          <a class="btn primary" href="/qm/pages/admin/print_dental_record.php?patient_id=<?php echo $patient_id; ?>" target="_blank">Print All Records</a>
         </div>
-      <?php endforeach; ?>
 
-      <?php if (!$records): ?>
-        <div class="table__row">
-          <div style="grid-column:1 / -1; font-weight:900; opacity:.75;">
-            No dental records found.
+        <?php foreach ($records as $r): ?>
+          <div style="margin-bottom:18px; padding:16px; background:#f4fbff; border-radius:10px;">
+            <div style="display:flex; justify-content:space-between; gap:16px;">
+              <div>
+                <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r['service'] ?: ''); ?></div>
+                <div style="font-size:13px; color:#6f7b86;">Dentist: <?php echo h($r['dentist_name'] ?: '—'); ?></div>
+                <?php if (!empty($r['diagnosis'])): ?>
+                  <div style="margin-top:8px; font-weight:800;">Dx: <?php echo nl2br(h($r['diagnosis'])); ?></div>
+                <?php endif; ?>
+                <?php if (!empty($r['treatment'])): ?>
+                  <div style="margin-top:8px; font-weight:800;">Tx: <?php echo nl2br(h($r['treatment'])); ?></div>
+                <?php endif; ?>
+                <?php if (!empty($r['prescription'])): ?>
+                  <div style="margin-top:8px; font-weight:800;">Prescription: <?php echo nl2br(h($r['prescription'])); ?></div>
+                <?php endif; ?>
+              </div>
+
+              <div style="text-align:right;">
+                <div style="font-weight:900;"><?php echo h($r['appointment_date'] . ' ' . $r['appointment_time']); ?></div>
+                <div style="font-size:13px; color:#6f7b86;"><?php echo h(substr($r['created_at'],0,10)); ?></div>
+                <div style="margin-top:8px;">
+                  <a class="btn light" href="/qm/pages/admin/print_dental_record.php?record_id=<?php echo (int)$r['record_id']; ?>" target="_blank">View / Print</a>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        <?php endforeach; ?>
+
       <?php endif; ?>
-    </div>
-  </section>
+
+    </section>
+  <?php endif; ?>
 </main>
+
 </body>
 </html>
