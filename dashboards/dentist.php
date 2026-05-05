@@ -108,10 +108,6 @@ for ($d = 1; $d <= 7; $d++) {
         Dr. <?php echo h($user["name"] ?? ""); ?>!
       </h1>
 
-      <div class="profileChip" title="Profile">
-        <div class="profileChip__avatar"></div>
-        <div class="profileChip__chev">▾</div>
-      </div>
     </div>
 
     <!-- Your Operating Hours (like screenshot) -->

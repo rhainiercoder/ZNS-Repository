@@ -47,6 +47,7 @@ function active_class(string $key, string $active): string {
       <?php elseif ($role === "receptionist"): ?>
       <a class="sidebar__link<?php echo active_class("dashboard", $active); ?>" href="/qm/dashboards/receptionist.php">Dashboard</a>
       <a class="sidebar__link<?php echo active_class("transactions", $active); ?>" href="/qm/pages/receptionist/transactions.php">Transactions</a>
+      <a class="sidebar__link<?php echo active_class("walkins", $active); ?>" href="/qm/pages/receptionist/walkins.php">Walk-in Records</a>
        <?php elseif ($role === "patient"): ?>
 
     <?php else: ?>

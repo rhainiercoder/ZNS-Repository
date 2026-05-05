@@ -191,6 +191,10 @@ try {
     // transactions table may not exist — leave empty
 }
 $incomeByDentist = [];
+$salaryFrom = $_GET['salary_from'] ?? date('Y-m-01');
+$salaryTo = $_GET['salary_to'] ?? date('Y-m-t');
+$salaryRate = max(0, (float)($_GET['salary_rate'] ?? 500));
+$salaryByDentist = [];
 try {
   $stmt = $conn->prepare("
     SELECT
@@ -213,6 +217,33 @@ try {
   $incomeByDentist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 } catch (Exception $e) {
   $incomeByDentist = [];
+}
+
+try {
+  $stmt = $conn->prepare("
+    SELECT
+      d.id AS dentist_id,
+      d.name AS dentist_name,
+      COUNT(DISTINCT a.id) AS accommodated_patients,
+      COALESCE(SUM(CASE WHEN t.type = 'payment' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS paid_revenue
+    FROM users d
+    LEFT JOIN appointments a
+      ON a.dentist_id = d.id
+     AND a.appointment_date BETWEEN ? AND ?
+     AND a.status IN ('approved','completed')
+    LEFT JOIN transactions t
+      ON t.appointment_id = a.id
+     AND t.type = 'payment'
+     AND t.status = 'success'
+    WHERE d.role = 'dentist'
+    GROUP BY d.id, d.name
+    ORDER BY accommodated_patients DESC, paid_revenue DESC, d.name ASC
+  ");
+  $stmt->bind_param("ss", $salaryFrom, $salaryTo);
+  $stmt->execute();
+  $salaryByDentist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+} catch (Exception $e) {
+  $salaryByDentist = [];
 }
 ?>
 
@@ -391,6 +422,51 @@ try {
     </div>
   </div>
 </section>
+    <section class="card adminTransactions" style="margin-bottom:18px;">
+      <div class="adminTransactions__head">
+        <h2 class="adminTransactions__title">Dentist Salary Calculator</h2>
+      </div>
+
+      <form method="get" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; margin-bottom:12px;">
+        <label>
+          <div style="font-weight:900; color:#0b2f4f; margin-bottom:6px;">From</div>
+          <input class="authInput" type="date" name="salary_from" value="<?php echo h($salaryFrom); ?>">
+        </label>
+        <label>
+          <div style="font-weight:900; color:#0b2f4f; margin-bottom:6px;">To</div>
+          <input class="authInput" type="date" name="salary_to" value="<?php echo h($salaryTo); ?>">
+        </label>
+        <label>
+          <div style="font-weight:900; color:#0b2f4f; margin-bottom:6px;">Rate per patient</div>
+          <input class="authInput" type="number" min="0" step="0.01" name="salary_rate" value="<?php echo h(number_format($salaryRate, 2, '.', '')); ?>">
+        </label>
+        <button class="btn btn--dark" type="submit">Compute Salaries</button>
+      </form>
+
+      <div class="table">
+        <div class="table__row table__row--head" style="grid-template-columns: 1.2fr .6fr .7fr .7fr;">
+          <div>Dentist</div>
+          <div>Patients</div>
+          <div style="text-align:right;">Paid Revenue</div>
+          <div style="text-align:right;">Computed Salary</div>
+        </div>
+
+        <?php foreach ($salaryByDentist as $s): ?>
+          <?php $computedSalary = (int)$s['accommodated_patients'] * $salaryRate; ?>
+          <div class="table__row" style="grid-template-columns: 1.2fr .6fr .7fr .7fr;">
+            <div style="font-weight:900; color:#0b2f4f;"><?php echo h($s['dentist_name']); ?></div>
+            <div class="table__muted"><?php echo h($s['accommodated_patients']); ?></div>
+            <div class="table__right">PHP <?php echo number_format((float)$s['paid_revenue'], 2); ?></div>
+            <div class="table__right">PHP <?php echo number_format($computedSalary, 2); ?></div>
+          </div>
+        <?php endforeach; ?>
+
+        <?php if (!$salaryByDentist): ?>
+          <div class="table__row"><div style="grid-column:1 / -1; font-weight:900; opacity:.75;">No dentists found.</div></div>
+        <?php endif; ?>
+      </div>
+    </section>
+
     <section class="card adminTransactions">
       <div class="adminTransactions__head">
         <h2 class="adminTransactions__title">Recent Transactions</h2>

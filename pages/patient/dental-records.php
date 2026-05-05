@@ -58,7 +58,7 @@ $view = $_GET['view'] ?? '';
       <?php else: ?>
 
         <div style="margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-          <a class="btn primary" href="/qm/pages/admin/print_dental_record.php?patient_id=<?php echo $uid; ?>" target="_blank">Print All Records</a>
+          <a class="btn primary" href="/qm/pages/patient/print_dental_record.php?patient_id=<?php echo $uid; ?>" target="_blank">Print All Records</a>
         </div>
 
         <?php foreach ($records as $r): ?>
@@ -89,7 +89,7 @@ $view = $_GET['view'] ?? '';
                 <div style="font-weight:900;"><?php echo h($r['appointment_date'] . ' ' . $r['appointment_time']); ?></div>
                 <div style="font-size:13px; color:#6f7b86;"><?php echo h(substr($r['created_at'],0,10)); ?></div>
                 <div style="margin-top:8px;">
-                  <a class="btn light" href="/qm/pages/admin/print_dental_record.php?record_id=<?php echo (int)$r['record_id']; ?>" target="_blank">View / Print</a>
+                  <a class="btn light" href="/qm/pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['record_id']; ?>" target="_blank">View / Print</a>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ $view = $_GET['view'] ?? '';
               <div style="text-align:right;">
                 <div style="font-weight:900;"><?php echo h(substr($r["created_at"],0,10)); ?></div>
                 <div style="margin-top:6px;">
-                  <a class="btn light" href="/qm/pages/admin/print_dental_record.php?record_id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
+                  <a class="btn light" href="/qm/pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
                 </div>
               </div>
             </div>

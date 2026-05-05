@@ -55,11 +55,6 @@ $address = get_setting_local($conn, 'clinic_address', '');
 .clinic-widget .meta .addr { color:#666; font-size:13px; }
 </style>
 
-<div class="card clinic-widget">
-  <div class="widget-head">
-    <h3>Clinic location</h3>
-  </div>
-
   <div id="clinicMapWidget"></div>
 
   <div class="meta">

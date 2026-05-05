@@ -233,18 +233,10 @@ $fallbackServiceImg = "teeth_icon.png";
         </div>
       </div>
 
-      <!-- Clinic location --> 
-      <style>
-        .pCard.mapCard { max-width: 480px; padding: 12px; }
-        .pCard.mapCard .clinic-widget { max-width: 100%; margin: 0; box-shadow: none; background: transparent; } 
-        .pCard.mapCard #clinicMapWidget { height: 180px !important; border-radius: 8px !important; width: 100% !important; border: 1px solid rgba(11,31,42,0.08) 
-        !important; box-sizing: border-box !important; } /* adjust the clinic name/address typography if needed */ 
-        .pCard.mapCard .clinic-widget .meta { margin-top:8px; font-weight:700; font-size:13px; } /* responsive tweak: full width on narrow screens */ 
-        @media (max-width:600px) { 
-        .pCard.mapCard { max-width: 100%; padding:10px; } 
-        .pCard.mapCard #clinicMapWidget { height: 160px !important; } } 
-      </style> <div class="pCard mapCard"> 
-        <?php require_once __DIR__ . "/../partials/clinic_map_widget.php"; ?> </div>
+      <!-- Clinic location -->
+      <div class="pCard mapCard">
+        <?php require_once __DIR__ . "/../partials/clinic_map_widget.php"; ?>
+      </div>
     </section>
 
   </div>

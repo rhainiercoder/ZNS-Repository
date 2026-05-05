@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../../auth.php";
 $user = require_role(["dentist"]);
 $role = $user["role"];
-$active = "dental-records";
+$active = "records";
 
 require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
@@ -12,6 +12,7 @@ $success = "";
 
 // If you clicked "Add Record" from today/dashboard, appointment_id will be present
 $appointment_id = (int)($_GET["appointment_id"] ?? 0);
+$patient_id = (int)($_GET["patient_id"] ?? 0);
 $appt = null;
 
 if ($appointment_id > 0) {
@@ -139,29 +140,62 @@ if (($_GET["saved"] ?? "") === "1") {
   $success = "Dental record saved and appointment marked as completed.";
 }
 
-// Load dentist's records list
-$stmt = $conn->prepare("
-  SELECT
-    dr.id,
-    dr.created_at,
-    dr.diagnosis,
-    dr.treatment,
-    dr.prescription,
-    dr.notes,
-    a.appointment_date,
-    a.appointment_time,
-    u.name AS patient_name,
-    s.name AS service
-  FROM dental_records dr
-  JOIN appointments a ON a.id = dr.appointment_id
-  JOIN users u ON u.id = dr.patient_id
-  JOIN services s ON s.id = a.service_id
-  WHERE dr.dentist_id = ?
-  ORDER BY dr.created_at DESC
-");
-$stmt->bind_param("i", $user["id"]);
-$stmt->execute();
-$records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$patient = null;
+$patientGroups = [];
+$records = [];
+
+if ($patient_id > 0) {
+  $stmt = $conn->prepare("
+    SELECT id, name, phone, email
+    FROM users
+    WHERE id = ?
+      AND role = 'patient'
+    LIMIT 1
+  ");
+  $stmt->bind_param("i", $patient_id);
+  $stmt->execute();
+  $patient = $stmt->get_result()->fetch_assoc();
+
+  $stmt = $conn->prepare("
+    SELECT
+      dr.id,
+      dr.created_at,
+      dr.diagnosis,
+      dr.treatment,
+      dr.prescription,
+      dr.notes,
+      a.appointment_date,
+      a.appointment_time,
+      s.name AS service
+    FROM dental_records dr
+    JOIN appointments a ON a.id = dr.appointment_id
+    JOIN services s ON s.id = a.service_id
+    WHERE dr.dentist_id = ?
+      AND dr.patient_id = ?
+    ORDER BY dr.created_at DESC
+  ");
+  $stmt->bind_param("ii", $user["id"], $patient_id);
+  $stmt->execute();
+  $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+} else {
+  $stmt = $conn->prepare("
+    SELECT
+      u.id AS patient_id,
+      u.name,
+      u.phone,
+      u.email,
+      COUNT(dr.id) AS records_count,
+      MAX(dr.created_at) AS last_record
+    FROM dental_records dr
+    JOIN users u ON u.id = dr.patient_id
+    WHERE dr.dentist_id = ?
+    GROUP BY u.id, u.name, u.phone, u.email
+    ORDER BY last_record DESC, u.name ASC
+  ");
+  $stmt->bind_param("i", $user["id"]);
+  $stmt->execute();
+  $patientGroups = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
 ?>
 <!doctype html>
 <html>
@@ -175,7 +209,20 @@ $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <main class="main">
   <div class="pageHead">
-    <h1 class="pageHead__title">Dental Records</h1>
+    <?php if ($patient_id > 0): ?>
+      <div>
+        <h1 class="pageHead__title">Records for <?php echo h($patient['name'] ?? 'Unknown Patient'); ?></h1>
+        <div style="color:#6f7b86; font-weight:800;">
+          Phone: <?php echo h($patient['phone'] ?? '—'); ?> / Email: <?php echo h($patient['email'] ?? '—'); ?>
+        </div>
+      </div>
+      <a class="btn light" href="/qm/pages/dentist/dental-records.php">Back to Patients</a>
+    <?php else: ?>
+      <div>
+        <h1 class="pageHead__title">Dental Records (Patients)</h1>
+        <p class="pageHead__lead">Click "View Records" to see a compiled record list for each patient.</p>
+      </div>
+    <?php endif; ?>
   </div>
 
   <?php if ($success): ?>
@@ -240,49 +287,80 @@ $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </section>
   <?php endif; ?>
 
-  <!-- List records -->
-  <section class="card" style="background:#e9f7ff;">
-    <h2 class="sectionTitle">My Records</h2>
+  <?php if ($patient_id === 0): ?>
+    <section class="card" style="background:#e9f7ff;">
+      <h2 class="sectionTitle">Patients With Dental Records</h2>
 
-    <div class="table">
-      <div class="table__row table__row--head" style="grid-template-columns: 1.2fr .9fr .9fr;">
-        <div>Patient / Service</div>
-        <div>Date/Time</div>
-        <div style="text-align:right;">Created</div>
+      <div class="table">
+        <div class="table__row table__row--head" style="grid-template-columns: 1fr .7fr .6fr .5fr;">
+          <div>Patient</div>
+          <div>Contact</div>
+          <div>Records</div>
+          <div style="text-align:right;">Action</div>
+        </div>
+
+        <?php foreach ($patientGroups as $row): ?>
+          <div class="table__row" style="grid-template-columns: 1fr .7fr .6fr .5fr;">
+            <div style="font-weight:900; color:#0b2f4f;"><?php echo h($row['name']); ?></div>
+            <div>
+              <div style="font-size:13px; color:#6f7b86;"><?php echo h($row['phone'] ?: '—'); ?></div>
+              <div style="font-size:12px; color:#8a8a8a;"><?php echo h($row['email'] ?: '—'); ?></div>
+            </div>
+            <div>
+              <div style="font-weight:900;"><?php echo (int)$row['records_count']; ?></div>
+              <div style="font-size:13px; color:#6f7b86;"><?php echo $row['last_record'] ? h(substr($row['last_record'], 0, 10)) : '—'; ?></div>
+            </div>
+            <div style="text-align:right;">
+              <a class="btn light" href="/qm/pages/dentist/dental-records.php?patient_id=<?php echo (int)$row['patient_id']; ?>">View Records</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+
+        <?php if (!$patientGroups): ?>
+          <div class="table__row">
+            <div style="grid-column:1 / -1; font-weight:900; opacity:.75;">No dental records yet.</div>
+          </div>
+        <?php endif; ?>
+      </div>
+    </section>
+  <?php else: ?>
+    <section class="card" style="background:#e9f7ff;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+        <h2 class="sectionTitle" style="margin:0;">Compiled Records</h2>
+        <a class="btn primary" href="/qm/pages/admin/print_dental_record.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">Print All Records</a>
       </div>
 
-      <?php foreach ($records as $r): ?>
-        <div class="table__row" style="grid-template-columns: 1.2fr .9fr .9fr;">
-          <div>
-            <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r["patient_name"]); ?></div>
-            <div style="font-size:12px; font-weight:900; opacity:.75;"><?php echo h($r["service"]); ?></div>
-
-            <?php if (!empty($r["diagnosis"])): ?>
-              <div style="margin-top:6px; font-weight:800; opacity:.75;">
-                <b>Dx:</b> <?php echo h($r["diagnosis"]); ?>
-              </div>
-            <?php endif; ?>
-          </div>
-
-          <div class="table__muted">
-            <?php echo h($r["appointment_date"]); ?> <?php echo h(substr($r["appointment_time"],0,5)); ?>
-          </div>
-
-          <div class="table__right" style="font-weight:900;">
-            <?php echo h(date("Y-m-d", strtotime($r["created_at"]))); ?>
-          </div>
+      <div class="table">
+        <div class="table__row table__row--head" style="grid-template-columns: 1.2fr .9fr .9fr;">
+          <div>Service / Details</div>
+          <div>Date/Time</div>
+          <div style="text-align:right;">Created</div>
         </div>
-      <?php endforeach; ?>
 
-      <?php if (!$records): ?>
-        <div class="table__row">
-          <div style="grid-column:1 / -1; font-weight:900; opacity:.75;">
-            No dental records yet.
+        <?php foreach ($records as $r): ?>
+          <div class="table__row" style="grid-template-columns: 1.2fr .9fr .9fr;">
+            <div>
+              <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r["service"]); ?></div>
+              <?php if (!empty($r["diagnosis"])): ?>
+                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Dx:</b> <?php echo h($r["diagnosis"]); ?></div>
+              <?php endif; ?>
+              <?php if (!empty($r["treatment"])): ?>
+                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Tx:</b> <?php echo h($r["treatment"]); ?></div>
+              <?php endif; ?>
+            </div>
+            <div class="table__muted"><?php echo h($r["appointment_date"]); ?> <?php echo h(substr($r["appointment_time"],0,5)); ?></div>
+            <div class="table__right" style="font-weight:900;"><?php echo h(date("Y-m-d", strtotime($r["created_at"]))); ?></div>
           </div>
-        </div>
-      <?php endif; ?>
-    </div>
-  </section>
+        <?php endforeach; ?>
+
+        <?php if (!$records): ?>
+          <div class="table__row">
+            <div style="grid-column:1 / -1; font-weight:900; opacity:.75;">No dental records found for this patient.</div>
+          </div>
+        <?php endif; ?>
+      </div>
+    </section>
+  <?php endif; ?>
 </main>
 </body>
 </html>

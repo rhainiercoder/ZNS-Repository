@@ -7,125 +7,257 @@ $role = $user["role"];
 
 function h($v){ return htmlspecialchars((string)$v); }
 
-$id = (int)($_GET['id'] ?? 0);
-if ($id <= 0) { http_response_code(404); die("Record not found"); }
+$codeMeta = [
+  'MARK' => ['label' => 'Marked',      'class' => 'is-selected'],
+  'C'    => ['label' => 'Caries',      'class' => 'is-red'],
+  'F'    => ['label' => 'Filling',     'class' => 'is-blue'],
+  'X'    => ['label' => 'Extraction',  'class' => 'is-red'],
+  'RCT'  => ['label' => 'Root Canal',  'class' => 'is-blue'],
+  '✓'    => ['label' => 'Completed',   'class' => 'is-selected'],
+];
 
-// load dental record with related appointment, service, patient, dentist
-$stmt = $conn->prepare("
-  SELECT dr.*, a.appointment_date, a.appointment_time, s.name AS service,
-         p.name AS patient_name, p.email AS patient_email, p.id AS patient_id,
-         d.name AS dentist_name
-  FROM dental_records dr
-  JOIN appointments a ON a.id = dr.appointment_id
-  JOIN services s ON s.id = a.service_id
-  JOIN users p ON p.id = dr.patient_id
-  LEFT JOIN users d ON d.id = dr.dentist_id
-  WHERE dr.id = ? LIMIT 1
-");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$rec = $stmt->get_result()->fetch_assoc();
-if (!$rec) { http_response_code(404); die("Record not found"); }
+function parse_tooth_codes(string $rawToothNo): array {
+  $toothCodes = [];
+  $codeCounts = [];
+  $rawToothNo = trim($rawToothNo);
+  if ($rawToothNo === '') return [$toothCodes, $codeCounts];
 
-// format dates
-$issued = date("Y-m-d H:i", strtotime($rec['created_at']));
-$app_dt = $rec['appointment_date'];
-$app_time = substr($rec['appointment_time'] ?? '',0,5);
+  $parts = preg_split('/\s*,\s*/', $rawToothNo);
+  foreach ($parts as $p) {
+    if ($p === '') continue;
+    if (preg_match('/\b([1-9]|[12][0-9]|3[0-2])\b\s*[:\-]?\s*([A-Za-z✓]{1,6})?/', $p, $m)) {
+      $n = (int)$m[1];
+      $code = strtoupper(trim($m[2] ?? ''));
+      if ($n >= 1 && $n <= 32) {
+        $toothCodes[$n] = $code !== '' ? $code : 'MARK';
+        $codeCounts[$toothCodes[$n]] = ($codeCounts[$toothCodes[$n]] ?? 0) + 1;
+      }
+    }
+  }
+  return [$toothCodes, $codeCounts];
+}
+
+$record_id  = (int)($_GET['record_id'] ?? ($_GET['id'] ?? 0));
+$patient_id = (int)($_GET['patient_id'] ?? 0);
+
+$rec = null;
+$records = [];
+$patient = null;
+
+if ($patient_id > 0 && $record_id <= 0) {
+  // Print ALL records for a specific patient
+  $ps = $conn->prepare("SELECT id, name, email FROM users WHERE id = ? LIMIT 1");
+  $ps->bind_param("i", $patient_id);
+  $ps->execute();
+  $patient = $ps->get_result()->fetch_assoc();
+
+  $stmt = $conn->prepare("
+    SELECT
+      dr.*,
+      a.appointment_date,
+      a.appointment_time,
+      s.name AS service,
+      p.name AS patient_name,
+      p.email AS patient_email,
+      p.id AS patient_id,
+      d.name AS dentist_name
+    FROM dental_records dr
+    LEFT JOIN appointments a ON a.id = dr.appointment_id
+    LEFT JOIN services s ON s.id = a.service_id
+    JOIN users p ON p.id = dr.patient_id
+    LEFT JOIN users d ON d.id = dr.dentist_id
+    WHERE dr.patient_id = ?
+    ORDER BY dr.created_at DESC
+  ");
+  $stmt->bind_param("i", $patient_id);
+  $stmt->execute();
+  $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+  if (!$patient || empty($records)) { http_response_code(404); die("Record not found"); }
+} else {
+  // Print single record
+  if ($record_id <= 0) { http_response_code(404); die("Record not found"); }
+
+  $stmt = $conn->prepare("
+    SELECT
+      dr.*,
+      a.appointment_date,
+      a.appointment_time,
+      s.name AS service,
+      p.name AS patient_name,
+      p.email AS patient_email,
+      p.id AS patient_id,
+      d.name AS dentist_name
+    FROM dental_records dr
+    LEFT JOIN appointments a ON a.id = dr.appointment_id
+    LEFT JOIN services s ON s.id = a.service_id
+    JOIN users p ON p.id = dr.patient_id
+    LEFT JOIN users d ON d.id = dr.dentist_id
+    WHERE dr.id = ?
+    LIMIT 1
+  ");
+  $stmt->bind_param("i", $record_id);
+  $stmt->execute();
+  $rec = $stmt->get_result()->fetch_assoc();
+  if (!$rec) { http_response_code(404); die("Record not found"); }
+}
+
+// format dates (single record mode)
+$issued = $rec ? date("Y-m-d H:i", strtotime($rec['created_at'])) : date("Y-m-d H:i");
+$app_dt = $rec ? ($rec['appointment_date'] ?? '') : '';
+$app_time = $rec ? substr($rec['appointment_time'] ?? '',0,5) : '';
 ?>
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Dental Record #<?php echo h($rec['id']); ?></title>
+  <title>
+    <?php if (!empty($records)): ?>
+      Dental Records — <?php echo h($patient['name'] ?? 'Patient'); ?>
+    <?php else: ?>
+      Dental Record #<?php echo h($rec['id']); ?>
+    <?php endif; ?>
+  </title>
   <link rel="stylesheet" href="/qm/assets/css/style.css">
   <style>
-
     @page { margin: 18mm; }
     body { font-family: Arial, Helvetica, sans-serif; color:#111; background:#fff; }
     .rec-wrap { max-width: 800px; margin: 0 auto; padding: 18px; background:#fff; }
-    .clinic-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .clinic-left { font-size:12px; line-height:1.1; }
-    .clinic-right { text-align:center; font-size:12px; }
-    h1 { margin:10px 0 2px; font-size:16px; }
-    .meta { margin-top:8px; display:flex; gap:12px; justify-content:space-between; align-items:center; font-weight:700; }
-    .section { margin-top:12px; border-radius:8px; padding:10px; }
-    .patient-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; }
-    .intra { background:#f8f8f8; padding:6px; border-radius:6px; font-size:12px; }
+    .no-print { margin-bottom: 12px; display:flex; gap:8px; justify-content:flex-end; }
+    @media print { .no-print { display:none !important; } }
     table.rec-table { width:100%; border-collapse:collapse; margin-top:8px; }
-    table.rec-table th, table.rec-table td { border:1px solid #ddd; padding:8px; font-size:13px; }
-    .sign { margin-top:18px; display:flex; justify-content:space-between; gap:12px; }
-    .sign .box { width:45%; border-top:1px solid #333; padding-top:6px; text-align:center; font-size:13px; }
-    .print-controls { position:fixed; right:18px; top:18px; z-index:9999; }
-    .print-controls .btn{ margin-bottom:6px; display:block; }
-    @media print {
-      .print-controls{ display:none; }
-      body{ background:#fff; }
-    }
+    table.rec-table th, table.rec-table td { border:1px solid #ddd; padding:8px; font-size:13px; vertical-align:top; }
+
+    /* ---- Tooth chart (box odontogram) ---- */
+    .toothChart { margin-top: 14px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; }
+    .toothChart__title{ font-weight: 800; margin-bottom: 8px; }
+    .toothRow { display: grid; grid-template-columns: repeat(16, 1fr); gap: 6px; margin-bottom: 10px; }
+    .toothBox { border: 1px solid #222; border-radius: 6px; height: 34px; display: grid; place-items: center; font-size: 12px; font-weight: 800; background: #fff; }
+    .toothBox small { display:block; font-weight: 700; opacity: .75; font-size: 10px; margin-top: 1px; }
+    .toothBox.is-selected { background: #e9f7ff; border-color: #0b2f4f; box-shadow: inset 0 0 0 2px rgba(11,47,79,.18); }
+    .toothBox.is-red { background:#ffe9e9; border-color:#b30000; }
+    .toothBox.is-blue { background:#e9f0ff; border-color:#123b99; }
+
+    .chartLegend{ display:flex; gap:10px; margin-top:8px; font-size:12px; font-weight:700; opacity:.9; flex-wrap:wrap; }
+    .legendSwatch{ display:inline-block; width:14px; height:14px; border:1px solid #222; border-radius:3px; vertical-align:middle; margin-right:6px; }
+    .legendSwatch.is-selected { background:#e9f7ff; border-color:#0b2f4f; }
+    .legendSwatch.is-red { background:#ffe9e9; border-color:#b30000; }
+    .legendSwatch.is-blue { background:#e9f0ff; border-color:#123b99; }
+
+    .record-break{ page-break-before: always; }
   </style>
 </head>
 <body>
-  <div class="print-controls">
-    <button class="btn btn--dark" onclick="window.print()">Print</button>
-    <!-- If you later add server-side PDF generation, link to it here -->
-    <a class="btn" href="/qm/pages/admin/reports.php">Back</a>
+  <div class="no-print" style="position:sticky; top:0; background:#fff; padding:12px 18px; z-index:10;">
+    <div style="max-width:800px; margin:0 auto; display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn btn--dark" onclick="window.print()">Print</button>
+      <a class="btn" href="/qm/pages/admin/dental-records.php">Back</a>
+    </div>
   </div>
 
-  <div class="rec-wrap">
-    <div class="clinic-header">
-      <div class="clinic-left">
-        <strong>ZNS Dental Clinic</strong><br>
-        #12345 St., Malinta, Valenzuela City<br>
-        Tel: 123 456 / 0912-345-6789<br>
-        Issued: <?php echo h($issued); ?><br>
-        Record ID: <?php echo h($rec['id']); ?>
+  <?php
+    $list = !empty($records) ? $records : [$rec];
+  ?>
+
+  <?php foreach ($list as $i => $r): ?>
+    <?php
+      $issued2 = date("Y-m-d H:i", strtotime($r['created_at'] ?? 'now'));
+      $app_dt2 = $r['appointment_date'] ?? '';
+      $app_time2 = substr($r['appointment_time'] ?? '', 0, 5);
+      [$toothCodes, $codeCounts] = parse_tooth_codes((string)($r['tooth_no'] ?? ''));
+    ?>
+    <div class="rec-wrap<?php echo $i === 0 ? '' : ' record-break'; ?>">
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <div style="font-size:12px; line-height:1.2;">
+          <strong>ZNS Dental Clinic</strong><br>
+          Dental Record<br>
+          Issued: <?php echo h($issued2); ?><br>
+          Record ID: <?php echo h($r['id']); ?>
+        </div>
+        <div style="text-align:right; font-size:12px;">
+          <img src="/qm/assets/img/logo.png" alt="Logo" style="height:52px;"><br>
+          Dentist: <?php echo h($r['dentist_name'] ?: '—'); ?>
+        </div>
       </div>
 
-      <div class="clinic-right">
-        <img src="/qm/assets/img/logo.png" alt="Logo" style="height:64px;">
-        <div style="margin-top:6px; font-weight:700;"><?php echo h($rec['dentist_name'] ?: ''); ?></div>
+      <h2 style="text-align:center; margin:14px 0 6px;">DENTAL RECORD</h2>
+
+      <div style="font-weight:800; margin-top:10px;">
+        Patient: <?php echo h($r['patient_name'] ?? '—'); ?><?php echo !empty($r['patient_email']) ? ' (' . h($r['patient_email']) . ')' : ''; ?><br>
+        Service: <?php echo h($r['service'] ?? '—'); ?><br>
+        Appointment: <?php echo h(trim(($app_dt2 . ' ' . $app_time2)) ?: '—'); ?>
       </div>
-    </div>
 
-    <h1 style="text-align:center; margin-top:12px;">DENTAL RECORD</h1>
+      <div class="toothChart">
+        <div class="toothChart__title">Tooth Chart (Odontogram)</div>
 
-    <div class="section">
-      <div class="patient-grid">
-        <div><strong>Patient:</strong> <?php echo h($rec['patient_name']); ?></div>
-        
-        <div><strong>Service:</strong> <?php echo h($rec['service']); ?></div>
-        <div><strong>Appointment:</strong> <?php echo h($app_dt . ' ' . $app_time); ?></div>
-        <div style="grid-column:1 / -1;"><strong>Diagnosis:</strong> <?php echo nl2br(h($rec['diagnosis'] ?? '')); ?></div>
-        <div style="grid-column:1 / -1;"><strong>Treatment:</strong> <?php echo nl2br(h($rec['treatment'] ?? '')); ?></div>
-        <div style="grid-column:1 / -1;"><strong>Prescription:</strong> <?php echo nl2br(h($rec['prescription'] ?? '')); ?></div>
+        <?php $upper = range(1,16); $lower = range(32,17); ?>
+
+        <div style="font-size:12px; font-weight:700; opacity:.75; margin-bottom:6px;">Upper (1–16)</div>
+        <div class="toothRow">
+          <?php foreach ($upper as $n): ?>
+            <?php
+              $code = $toothCodes[$n] ?? '';
+              $meta = $code !== '' ? ($codeMeta[$code] ?? $codeMeta['MARK']) : null;
+              $cls = $meta ? (' ' . $meta['class']) : '';
+            ?>
+            <div class="toothBox<?php echo $cls; ?>">
+              <?php echo (int)$n; ?>
+              <small><?php echo h($code); ?></small>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <div style="font-size:12px; font-weight:700; opacity:.75; margin-bottom:6px;">Lower (32–17)</div>
+        <div class="toothRow">
+          <?php foreach ($lower as $n): ?>
+            <?php
+              $code = $toothCodes[$n] ?? '';
+              $meta = $code !== '' ? ($codeMeta[$code] ?? $codeMeta['MARK']) : null;
+              $cls = $meta ? (' ' . $meta['class']) : '';
+            ?>
+            <div class="toothBox<?php echo $cls; ?>">
+              <?php echo (int)$n; ?>
+              <small><?php echo h($code); ?></small>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="chartLegend">
+          <?php
+            $usedCodes = array_keys($codeCounts);
+            if (!$usedCodes) $usedCodes = ['MARK'];
+          ?>
+          <?php foreach ($usedCodes as $c): ?>
+            <?php $m = $codeMeta[$c] ?? ['label'=>$c, 'class'=>'is-selected']; ?>
+            <span>
+              <span class="legendSwatch <?php echo h($m['class']); ?>"></span>
+              <?php echo h($c); ?> = <?php echo h($m['label']); ?>
+              (<?php echo (int)($codeCounts[$c] ?? 0); ?>)
+            </span>
+          <?php endforeach; ?>
+        </div>
       </div>
-    </div>
 
-    <div class="section" style="margin-top:10px;">
-      <strong>Notes / Additional Info</strong>
-      <div style="margin-top:6px; font-size:13px;"><?php echo nl2br(h($rec['notes'] ?? '')); ?></div>
-    </div>
-
-    <div class="section" style="margin-top:10px;">
-      <strong>Procedure Log</strong>
-      <table class="rec-table">
-        <thead>
-          <tr><th>Date</th><th>Diagnosis</th><th>Tooth #</th><th>Procedure & Recommendation</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><?php echo h($rec['created_at']); ?></td>
-            <td><?php echo h($rec['diagnosis']); ?></td>
-            <td><?php echo h($rec['tooth_no'] ?? ''); ?></td>
-            <td><?php echo nl2br(h($rec['treatment'] ?? '')); ?></td>
-          </tr>
-        </tbody>
+      <table class="rec-table" style="margin-top:12px;">
+        <tr>
+          <th style="width:22%;">Diagnosis</th>
+          <td><?php echo nl2br(h($r['diagnosis'] ?? '')); ?></td>
+        </tr>
+        <tr>
+          <th>Treatment</th>
+          <td><?php echo nl2br(h($r['treatment'] ?? '')); ?></td>
+        </tr>
+        <tr>
+          <th>Prescription</th>
+          <td><?php echo nl2br(h($r['prescription'] ?? '')); ?></td>
+        </tr>
+        <tr>
+          <th>Notes</th>
+          <td><?php echo nl2br(h($r['notes'] ?? '')); ?></td>
+        </tr>
       </table>
     </div>
-
-    <div class="sign">
-      <div class="box">Dentist signature</div>
-      <div class="box">Patient / Guardian signature</div>
-    </div>
-  </div>
+  <?php endforeach; ?>
 </body>
 </html>
