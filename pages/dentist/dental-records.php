@@ -77,8 +77,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "save_
     $prescription = trim($_POST["prescription"] ?? "");
     $notes = trim($_POST["notes"] ?? "");
 
+    $tooth_no = trim($_POST["tooth_no"] ?? "");
+
+    // sanitize tooth_no to "1,2,14" only
+    $valid = [];
+    foreach (explode(",", $tooth_no) as $t) {
+      $n = (int)trim($t);
+      if ($n >= 1 && $n <= 32) $valid[$n] = true;
+    }
+    $tooth_no = implode(",", array_keys($valid));
+
     if ($diagnosis === "" && $treatment === "" && $prescription === "" && $notes === "") {
       $errors[] = "Please fill at least one field.";
+    }
+
+    // require at least 1 tooth marked (disable this if you don't want it)
+    if ($tooth_no === "") {
+      $errors[] = "Please mark at least one affected tooth before saving.";
     }
 
     if (!$errors) {
@@ -99,15 +114,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "save_
         $conn->begin_transaction();
         try {
           $stmt = $conn->prepare("
-            INSERT INTO dental_records (appointment_id, dentist_id, patient_id, diagnosis, treatment, prescription, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO dental_records (appointment_id, dentist_id, patient_id, diagnosis, tooth_no, treatment, prescription, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           ");
           $stmt->bind_param(
-            "iiissss",
+            "iiisssss",
             $appointment_id,
             $user["id"],
             $check["patient_id"],
             $diagnosis,
+            $tooth_no,
             $treatment,
             $prescription,
             $notes
@@ -161,6 +177,7 @@ if ($patient_id > 0) {
       dr.id,
       dr.created_at,
       dr.diagnosis,
+      dr.tooth_no,
       dr.treatment,
       dr.prescription,
       dr.notes,
@@ -203,6 +220,17 @@ if ($patient_id > 0) {
   <meta charset="utf-8" />
   <title>Dentist - Dental Records</title>
   <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <style>
+    /* ensure visible teal marking even if style.css hasn't been updated yet */
+    .toothChart{ background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; padding:12px; }
+    .toothChart__row{ display:grid; grid-template-columns:repeat(16, 1fr); gap:8px; }
+    .toothChart__label{ margin:10px 0 6px; font-weight:900; color:#0b2f4f; }
+    .tooth{
+      height:38px; border-radius:10px; border:1px solid rgba(0,0,0,.2);
+      background:#fff; font-weight:1000; cursor:pointer;
+    }
+    .tooth--marked{ background:#0ea5a4; color:#fff; border-color:#0ea5a4; }
+  </style>
 </head>
 <body>
 <?php include __DIR__ . "/../../partials/sidebar.php"; ?>
@@ -238,7 +266,6 @@ if ($patient_id > 0) {
   <?php endif; ?>
 
   <?php if ($appt): ?>
-    <!-- Add record panel -->
     <section class="card" style="background:#e9f7ff; margin-bottom:16px;">
       <h2 class="sectionTitle">Add Record</h2>
 
@@ -252,6 +279,25 @@ if ($patient_id > 0) {
       </div>
 
       <form method="post" style="display:grid; gap:12px; max-width:760px;">
+        <input type="hidden" name="tooth_no" id="tooth_no" value="">
+
+        <div class="toothChart" style="margin:12px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="font-weight:1000; color:#0b2f4f;">Tooth Chart (Odontogram)</div>
+            <div id="toothCount" style="font-weight:1000;">Marked (0)</div>
+          </div>
+
+          <div class="toothChart__label">Upper (1–16)</div>
+          <div class="toothChart__row" id="teethUpper"></div>
+
+          <div class="toothChart__label" style="margin-top:10px;">Lower (32–17)</div>
+          <div class="toothChart__row" id="teethLower"></div>
+
+          <div class="toothChart__hint" style="margin-top:10px; font-size:13px; font-weight:800; opacity:.7;">
+            Click teeth to mark/unmark. Marked teeth will appear in patient/admin printables.
+          </div>
+        </div>
+
         <input type="hidden" name="action" value="save_record">
         <input type="hidden" name="appointment_id" value="<?php echo (int)$appt["id"]; ?>">
 
@@ -327,7 +373,11 @@ if ($patient_id > 0) {
     <section class="card" style="background:#e9f7ff;">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
         <h2 class="sectionTitle" style="margin:0;">Compiled Records</h2>
-        <a class="btn primary" href="/qm/pages/admin/print_dental_record.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">Print All Records</a>
+
+        <!-- NOTE: this points to /dentist/ so it won't be Forbidden. Create this page or change back to /admin/ if you prefer. -->
+        <a class="btn primary" href="/qm/pages/dentist/print_dental_records.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">
+          Print All Records
+        </a>
       </div>
 
       <div class="table">
@@ -341,6 +391,9 @@ if ($patient_id > 0) {
           <div class="table__row" style="grid-template-columns: 1.2fr .9fr .9fr;">
             <div>
               <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r["service"]); ?></div>
+              <?php if (!empty($r["tooth_no"])): ?>
+                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Teeth:</b> <?php echo h($r["tooth_no"]); ?></div>
+              <?php endif; ?>
               <?php if (!empty($r["diagnosis"])): ?>
                 <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Dx:</b> <?php echo h($r["diagnosis"]); ?></div>
               <?php endif; ?>
@@ -362,5 +415,48 @@ if ($patient_id > 0) {
     </section>
   <?php endif; ?>
 </main>
+
+<script>
+(function(){
+  const upperWrap = document.getElementById('teethUpper');
+  const lowerWrap = document.getElementById('teethLower');
+  const input = document.getElementById('tooth_no');
+  const countEl = document.getElementById('toothCount');
+  if (!upperWrap || !lowerWrap || !input) return;
+
+  const selected = new Set(
+    (input.value || '').split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(n => Number.isFinite(n) && n >= 1 && n <= 32)
+  );
+
+  function sync(){
+    const arr = Array.from(selected).sort((a,b)=>a-b);
+    input.value = arr.join(',');
+    if (countEl) countEl.textContent = `Marked (${arr.length})`;
+  }
+
+  function renderTooth(num, container){
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'tooth';
+    el.textContent = num;
+    if (selected.has(num)) el.classList.add('tooth--marked');
+
+    el.addEventListener('click', () => {
+      if (selected.has(num)) selected.delete(num);
+      else selected.add(num);
+      el.classList.toggle('tooth--marked');
+      sync();
+    });
+
+    container.appendChild(el);
+  }
+
+  for (let i=1;i<=16;i++) renderTooth(i, upperWrap);
+  for (let i=32;i>=17;i--) renderTooth(i, lowerWrap);
+  sync();
+})();
+</script>
 </body>
 </html>

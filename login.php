@@ -102,11 +102,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <?php endif; ?>
 
       <!-- Optional (UI only) -->
-      <button class="authGoogleBtn" type="button" onclick="alert('Google login is UI only for now.');">
-        <span style="font-weight:900;">G</span> Log in with Google
-      </button>
-
-      <div class="authDivider">Or</div>
 
       <form method="post">
         <div class="authField">
@@ -121,7 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="authRow">
           <label><input type="checkbox" name="remember" value="1"> Remember Me</label>
-          <a class="authSmallLink" href="#" onclick="alert('Forgot password not implemented yet.'); return false;">Forget Password?</a>
         </div>
 
         <button class="authSubmit" type="submit">Log in</button>

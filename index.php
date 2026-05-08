@@ -102,37 +102,37 @@
         <img src="assets/img/implant_dentistry.png" alt="">
         <h4>Implant Dentistry</h4>
         <p>Restore your smile with precision implants, durable materials, and advanced planning for safe placement and long‑term comfort.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://www.joms.org/pb/assets/raw/Health%20Advance/journals/yjoms/YJOMS752S.pdf">Read more</a>
       </div>
       <div class="service-card">
         <img src="assets/img/surgery_dentistry.jpg" alt="">
         <h4>Surgery Dentistry</h4>
         <p>Gentle surgical care with modern anesthesia, clear recovery guidance, and full attention to your safety and comfort.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://exodontia.info/wp-content/uploads/2021/07/Principles_of_Oral_Maxillofacial_Surgery._6th_Edition.pdf">Read more</a>
       </div>
       <div class="service-card">
         <img src="assets/img/dental_treatment.jpg" alt="">
         <h4>Dental Treatment</h4>
         <p>Comprehensive treatment for cavities, gum health, and tooth preservation using modern tools and pain‑free techniques.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://saskdentists.com/wp-content/uploads/2025/03/03.14.2025-Long-Term-Care-Resident-Guidelines.pdf">Read more</a>
       </div>
       <div class="service-card">
         <img src="assets/img/cosmetic_dentistry.jpg" alt="">
         <h4>Cosmetic Dentistry</h4>
         <p>Brighten and reshape your smile with veneers, whitening, and cosmetic bonding tailored to your facial harmony.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://www.seapointclinic.ie/wp-content/uploads/2025/08/Cosmetics-E-Book.pdf">Read more</a>
       </div>
       <div class="service-card">
         <img src="assets/img/orthodontics.jpg" alt="">
         <h4>Orthodontics</h4>
         <p>Align teeth with braces or clear aligners, guided by digital scans for accuracy and comfort.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://www.umft.ro/wp-content/uploads/2021/04/a_20guide_20to_20orthodontics.pdf">Read more</a>
       </div>
       <div class="service-card">
         <img src="assets/img/preventive_care.jpg" alt="">
         <h4>Preventive Care</h4>
         <p>Regular cleanings, checkups, and patient education to maintain strong teeth and healthy gums.</p>
-        <a href="#contacts">Read more</a>
+        <a href="https://www.cda.org/wp-content/uploads/preventive_care_english.pdf">Read more</a>
       </div>
     </div>
   </div>
@@ -199,9 +199,7 @@
       <p class="formCtaLead">
         Our administrator will select a convenient schedule of visits and answer all questions.
       </p>
-
-      <input type="text" placeholder="Enter your name">
-      <input type="text" placeholder="Enter your phone">
+      <br>
       <a class="btn light" href="login.php">Make Appointment</a>
     </div>
   </div>

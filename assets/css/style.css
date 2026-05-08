@@ -2745,3 +2745,35 @@ body.landing .landingContactsCard{
     border-top:0;
   }
 }
+.toothChart{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:12px;
+  padding:12px;
+}
+
+.toothChart__row{
+  display:grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap:8px;
+}
+
+.toothChart__label{
+  margin:10px 0 6px;
+  font-weight:900;
+  color:#0ea5a4;
+}
+.tooth{
+  height:38px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.2);
+  background:#fff;
+  font-weight:1000;
+  cursor:pointer;
+}
+
+.tooth--marked{
+  background:#0ea5a4;
+  color:#fff;
+  border-color:#0ea5a4;
+}
