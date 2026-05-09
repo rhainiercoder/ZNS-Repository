@@ -134,6 +134,114 @@ function parse_tooth_codes(string $rawToothNo): array {
     .legendSwatch.is-blue { background:#e9f0ff; border-color:#123b99; }
 
     .record-break { page-break-before: always; }
+
+    @media screen and (max-width: 640px) {
+      html, body {
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        background: #fff;
+      }
+
+      .no-print {
+        position: sticky !important;
+        top: 0;
+        margin: 0;
+        padding: 10px 12px !important;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .no-print > div {
+        max-width: 100% !important;
+        width: 100%;
+        justify-content: stretch !important;
+      }
+
+      .no-print .btn {
+        flex: 1 1 0;
+        min-height: 44px;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .rec-wrap {
+        width: 100%;
+        max-width: none;
+        padding: 14px 12px 22px;
+        overflow-wrap: anywhere;
+      }
+
+      .rec-wrap > div:first-child {
+        align-items: flex-start;
+        gap: 10px !important;
+      }
+
+      .rec-wrap > div:first-child img {
+        height: 44px !important;
+      }
+
+      .rec-wrap h2 {
+        font-size: 24px;
+        line-height: 1.1;
+        margin-top: 18px !important;
+      }
+
+      .toothChart {
+        padding: 10px 8px;
+        border-radius: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .toothRow {
+        grid-template-columns: repeat(8, minmax(38px, 1fr));
+        gap: 6px;
+        min-width: 344px;
+      }
+
+      .toothBox {
+        min-width: 38px;
+        height: 36px;
+      }
+
+      .chartLegend {
+        gap: 8px;
+        line-height: 1.35;
+      }
+
+      table.rec-table,
+      table.rec-table tbody,
+      table.rec-table tr,
+      table.rec-table th,
+      table.rec-table td {
+        display: block;
+        width: 100% !important;
+      }
+
+      table.rec-table tr {
+        border: 1px solid #ddd;
+        border-bottom: 0;
+      }
+
+      table.rec-table tr:last-child {
+        border-bottom: 1px solid #ddd;
+      }
+
+      table.rec-table th,
+      table.rec-table td {
+        border: 0;
+        padding: 8px 10px;
+        text-align: left;
+      }
+
+      table.rec-table th {
+        background: #f7fbfc;
+        border-bottom: 1px solid #e5e7eb;
+      }
+    }
   </style>
 </head>
 <body>
