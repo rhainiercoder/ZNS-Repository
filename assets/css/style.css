@@ -3437,7 +3437,365 @@ body.landingPage .siteHeader .brandSub{
     margin:12px auto 0;
   }
 
-  body.landingPage .siteHeader .container.nav{
+body.landingPage .siteHeader .container.nav{
     min-height:60px;
+  }
+}
+
+/* Final mobile hamburger fix for index/login/signup */
+@media (max-width: 860px){
+  body.landingPage .siteHeader .container.nav,
+  body.authPage .siteHeader .container.nav{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:10px;
+  }
+
+  body.landingPage .brand,
+  body.authPage .brand{
+    min-width:0;
+  }
+
+  body.landingPage .navBurger,
+  body.authPage .navBurger{
+    display:flex !important;
+    grid-column:2;
+    grid-row:1;
+    width:50px;
+    height:50px;
+    margin:0;
+    visibility:visible;
+    opacity:1;
+  }
+
+  body.landingPage .siteNav,
+  body.authPage .siteNav,
+  body.landingPage .nav-actions,
+  body.authPage .nav-actions{
+    display:none !important;
+    width:100%;
+    grid-column:1 / -1;
+  }
+
+  body.landingPage .navToggle:checked ~ .siteNav,
+  body.authPage .navToggle:checked ~ .siteNav{
+    display:flex !important;
+    flex-direction:column;
+    align-items:stretch;
+    padding-top:10px;
+  }
+
+  body.landingPage .navToggle:checked ~ .nav-actions,
+  body.authPage .navToggle:checked ~ .nav-actions{
+    display:flex !important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+    padding-top:10px;
+  }
+
+  body.landingPage .siteNav ul,
+  body.authPage .siteNav ul{
+    display:flex !important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    width:100%;
+    margin:0;
+    padding:0;
+  }
+
+  body.landingPage .siteNav a,
+  body.authPage .siteNav a{
+    display:block;
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    background:#f2fbfc;
+    text-decoration:none;
+  }
+
+  body.landingPage .nav-actions .btn,
+  body.authPage .nav-actions .btn{
+    width:100%;
+    justify-content:center;
+    text-align:center;
+  }
+}
+
+/* ==========================================================
+   Mobile app responsiveness only. Desktop remains unchanged.
+========================================================== */
+@media (max-width: 768px){
+  html,
+  body{
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  .main,
+  .app__main{
+    width:100%;
+    max-width:100%;
+    margin-left:0 !important;
+    padding:82px 12px 18px !important;
+  }
+
+  .card{
+    width:100%;
+    max-width:100%;
+    padding:14px !important;
+    border-radius:12px;
+  }
+
+  .pageHead{
+    width:100%;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:12px;
+    margin-bottom:14px;
+  }
+
+  .pageHead__title{
+    font-size:clamp(26px, 9vw, 34px);
+    line-height:1.08;
+    overflow-wrap:anywhere;
+  }
+
+  .pageHead__lead{
+    margin:0;
+    line-height:1.45;
+  }
+
+  .pageHead .btn,
+  .pageHead a.btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .grid,
+  .grid-2,
+  .grid-3,
+  .adminStats,
+  .pGrid2,
+  .patientBottom{
+    grid-template-columns:1fr !important;
+  }
+
+  .main :not(.table__row):not(.calendar__grid):not(.calendar__dow)[style*="grid-template-columns"],
+  .main :not(.table__row)[style*="display:grid"]{
+    grid-template-columns:1fr !important;
+  }
+
+  .main [style*="display:flex"]{
+    flex-wrap:wrap;
+  }
+
+  .main form[style*="display:flex"],
+  .main div[style*="display:flex"][style*="justify-content:flex-end"],
+  .main div[style*="display:flex"][style*="justify-content:space-between"]{
+    flex-direction:column;
+    align-items:stretch !important;
+  }
+
+  .main input,
+  .main select,
+  .main textarea,
+  .main .authInput,
+  .main .btn,
+  .main button{
+    max-width:100%;
+  }
+
+  .main .btn,
+  .main button.btn,
+  .main a.btn{
+    min-height:44px;
+    white-space:normal;
+    text-align:center;
+    justify-content:center;
+  }
+
+  .main form .btn,
+  .main form button,
+  .main form a.btn{
+    width:100%;
+  }
+
+  .w-360{
+    width:100% !important;
+  }
+
+  .table{
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .table__row{
+    min-width:680px;
+    gap:10px;
+    padding:12px !important;
+  }
+
+  .table__row--head{
+    position:sticky;
+    top:0;
+    z-index:1;
+  }
+
+  .table__right,
+  .table__row [style*="text-align:right"]{
+    text-align:left !important;
+  }
+
+  .patientCell{
+    align-items:flex-start;
+  }
+
+  .statCard{
+    grid-template-columns:42px 1fr !important;
+  }
+
+  .statCard__value{
+    grid-column:2 !important;
+    grid-row:auto !important;
+    font-size:28px;
+  }
+
+  .adminSchedule__head,
+  .adminSchedule__layout,
+  .calendar__bar,
+  .calendar__barLeft,
+  .calendar__barRight{
+    flex-direction:column;
+    align-items:stretch !important;
+  }
+
+  .calendar{
+    padding:10px;
+    overflow-x:auto;
+  }
+
+  .calendar__bar{
+    gap:10px;
+  }
+
+  .calendar__barLeft{
+    display:grid !important;
+    grid-template-columns:44px 1fr 44px;
+    align-items:center !important;
+  }
+
+  .calendar__nav{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    font-size:28px;
+  }
+
+  .calendar__month{
+    font-size:16px;
+  }
+
+  .calendar__dow,
+  .calendar__grid{
+    min-width:520px;
+    gap:6px;
+  }
+
+  .day{
+    height:40px;
+    border-radius:10px;
+  }
+
+  .legend,
+  .legend--row,
+  .legend--compact{
+    justify-content:flex-start;
+    gap:10px;
+  }
+
+  .authShell{
+    width:calc(100% - 24px);
+    margin:12px auto 18px;
+    grid-template-columns:1fr !important;
+  }
+
+  .authHero{
+    min-height:220px;
+  }
+
+  .authPanel{
+    padding:20px 16px;
+  }
+
+  .authH1{
+    font-size:32px;
+  }
+
+  .pHero{
+    grid-template-columns:1fr !important;
+    padding:18px;
+  }
+
+  .pHero h1{
+    font-size:30px;
+  }
+
+  .pHeroActions,
+  .avail-actions,
+  .avail-row{
+    flex-direction:column;
+    align-items:stretch !important;
+  }
+
+  .pServiceRow{
+    grid-template-columns:1fr !important;
+  }
+
+  .pService{
+    min-height:82px;
+  }
+
+  .pOrb{
+    display:none;
+  }
+
+  .hours{
+    overflow-x:auto;
+  }
+
+  .hours__row{
+    min-width:420px;
+  }
+
+  .clinic-widget,
+  .map,
+  #clinicMapWidget{
+    max-width:100% !important;
+  }
+}
+
+@media (max-width: 480px){
+  .main,
+  .app__main{
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+
+  .card{
+    padding:12px !important;
+  }
+
+  .table__row{
+    min-width:620px;
+  }
+
+  .calendar__dow,
+  .calendar__grid{
+    min-width:480px;
   }
 }
