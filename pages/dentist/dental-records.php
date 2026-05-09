@@ -232,9 +232,69 @@ if ($patient_id > 0) {
       background:#fff; font-weight:1000; cursor:pointer;
     }
     .tooth--marked{ background:#0ea5a4; color:#fff; border-color:#0ea5a4; }
+
+    @media (max-width: 640px){
+      .dentistRecordsPage .toothChart{
+        padding:10px 8px;
+        border-radius:12px;
+        overflow-x:hidden;
+      }
+
+      .dentistRecordsPage .toothChart > div:first-child{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:6px !important;
+      }
+
+      .dentistRecordsPage #toothCount{
+        width:100%;
+        padding:8px 10px;
+        border-radius:10px;
+        background:#f1fbfb;
+        color:#0b2f4f;
+      }
+
+      .dentistRecordsPage .toothChart__row{
+        grid-template-columns:repeat(8, minmax(34px, 1fr)) !important;
+        gap:6px;
+      }
+
+      .dentistRecordsPage .tooth{
+        min-width:34px;
+        height:42px;
+        border-radius:9px;
+        font-size:14px;
+        touch-action:manipulation;
+      }
+
+      .dentistRecordsPage .toothChart__hint{
+        line-height:1.35;
+      }
+
+      .dentistRecordsPage form[method="post"]{
+        max-width:100% !important;
+      }
+
+      .dentistRecordsPage textarea{
+        min-height:96px;
+        font-size:16px;
+      }
+
+      .dentistRecordsPage form[method="post"] > div[style*="justify-content:flex-end"]{
+        flex-direction:column;
+        align-items:stretch !important;
+      }
+
+      .dentistRecordsPage form[method="post"] > div[style*="justify-content:flex-end"] .btn{
+        width:100%;
+        min-height:46px;
+        justify-content:center;
+        text-align:center;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="dentistRecordsPage">
 <?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
