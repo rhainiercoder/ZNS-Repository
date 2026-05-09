@@ -2792,42 +2792,35 @@ body.landing .landingContactsCard{
 
 /* mobile drawer */
 @media (max-width: 768px){
-  .main, .app__main{ margin-left:0; }
-
-  .sidebarToggle{
-    display:block;
-    position:fixed;
-    top:12px;
-    left:12px;
-    z-index:1101;
-    padding:10px 12px;
-    border:0;
-    border-radius:12px;
-    background:rgba(0,0,0,.55);
-    color:#fff;
-  }
-
   .sidebar{
-    transform:translateX(-100%);
-    transition:transform .2s ease;
-    z-index:1100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform .2s ease;
+    z-index: 1100;
   }
 
   body.sidebar-open .sidebar{
-    transform:translateX(0);
+    transform: translateX(0);
   }
 
   body.sidebar-open::before{
     content:"";
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.35);
-    z-index:1099;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    z-index: 1099;
   }
-}
 
-@media (max-width: 768px){
-  .sidebarToggle{ display:block; }
+  .sidebarToggle{
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1101;
+  }
 }
 
 /* Desktop default */
@@ -2870,5 +2863,17 @@ body.landing .landingContactsCard{
   .topnav__btn{
     width:100%;
     text-align:left;
+  }
+}
+
+@media (max-width: 768px){
+  .topnav__links,
+  .topnav__actions{
+    display:none !important;
+  }
+
+  .topnav__toggle:checked ~ .topnav__links,
+  .topnav__toggle:checked ~ .topnav__actions{
+    display:flex !important;
   }
 }
