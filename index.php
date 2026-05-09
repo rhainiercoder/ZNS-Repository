@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <title>ZNS Dental Clinic</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body class="landingPage">
 
@@ -59,10 +59,10 @@
 
     <div class="img-collage">
       <!-- Replace with your local images -->
-      <img src="assets/img/service_2.jpg" alt="">
-      <img src="assets/img/service_1.jpg" alt="">
-      <img src="assets/img/facility_1.jpg" alt="">
-      <img src="assets/img/faci_4.jpg" alt="">
+      <img src="/assets/img/service_2.jpg" alt="">
+      <img src="/assets/img/service_1.jpg" alt="">
+      <img src="/assets/img/facility_1.jpg" alt="">
+      <img src="/assets/img/faci_4.jpg" alt="">
     </div>
   </div>
 </section>
@@ -70,7 +70,7 @@
 <!-- ABOUT -->
 <section id="about" class="container about-strip reveal">
   <div class="about-card">
-    <img src="assets/img/logo.png" alt="">
+    <img src="/assets/img/logo.png" alt="">
     <div>
       <div class="aboutClinicName">ZNS Dental Clinic</div>
       <div class="aboutClinicLine">181 Mc Arthur Highway Dalandanan, Valenzuela City</div>
@@ -101,37 +101,37 @@
 
     <div class="services">
       <div class="service-card">
-        <img src="assets/img/implant_dentistry.png" alt="">
+        <img src="/assets/img/implant_dentistry.png" alt="">
         <h4>Implant Dentistry</h4>
         <p>Restore your smile with precision implants, durable materials, and advanced planning for safe placement and long‑term comfort.</p>
         <a href="https://www.joms.org/pb/assets/raw/Health%20Advance/journals/yjoms/YJOMS752S.pdf">Read more</a>
       </div>
       <div class="service-card">
-        <img src="assets/img/surgery_dentistry.jpg" alt="">
+        <img src="/assets/img/surgery_dentistry.jpg" alt="">
         <h4>Surgery Dentistry</h4>
         <p>Gentle surgical care with modern anesthesia, clear recovery guidance, and full attention to your safety and comfort.</p>
         <a href="https://exodontia.info/wp-content/uploads/2021/07/Principles_of_Oral_Maxillofacial_Surgery._6th_Edition.pdf">Read more</a>
       </div>
       <div class="service-card">
-        <img src="assets/img/dental_treatment.jpg" alt="">
+        <img src="/assets/img/dental_treatment.jpg" alt="">
         <h4>Dental Treatment</h4>
         <p>Comprehensive treatment for cavities, gum health, and tooth preservation using modern tools and pain‑free techniques.</p>
         <a href="https://saskdentists.com/wp-content/uploads/2025/03/03.14.2025-Long-Term-Care-Resident-Guidelines.pdf">Read more</a>
       </div>
       <div class="service-card">
-        <img src="assets/img/cosmetic_dentistry.jpg" alt="">
+        <img src="/assets/img/cosmetic_dentistry.jpg" alt="">
         <h4>Cosmetic Dentistry</h4>
         <p>Brighten and reshape your smile with veneers, whitening, and cosmetic bonding tailored to your facial harmony.</p>
         <a href="https://www.seapointclinic.ie/wp-content/uploads/2025/08/Cosmetics-E-Book.pdf">Read more</a>
       </div>
       <div class="service-card">
-        <img src="assets/img/orthodontics.jpg" alt="">
+        <img src="/assets/img/orthodontics.jpg" alt="">
         <h4>Orthodontics</h4>
         <p>Align teeth with braces or clear aligners, guided by digital scans for accuracy and comfort.</p>
         <a href="https://www.umft.ro/wp-content/uploads/2021/04/a_20guide_20to_20orthodontics.pdf">Read more</a>
       </div>
       <div class="service-card">
-        <img src="assets/img/preventive_care.jpg" alt="">
+        <img src="/assets/img/preventive_care.jpg" alt="">
         <h4>Preventive Care</h4>
         <p>Regular cleanings, checkups, and patient education to maintain strong teeth and healthy gums.</p>
         <a href="https://www.cda.org/wp-content/uploads/preventive_care_english.pdf">Read more</a>
@@ -150,9 +150,9 @@
         The latest equipment, high‑precision digital technologies and the best achievements of modern world medicine have allowed us to create a completely new, unprecedented level of painlessness, safety and comfort for patients.
       </p>
       <br>
-      <a class="btn light" href="login.php">Make Appointment</a>
+      <a class="btn light" href="/login.php">Make Appointment</a>
     </div>
-    <img src="assets/img/clinic_front.jpg" alt="">
+    <img src="/assets/img/clinic_front.jpg" alt="">
   </div>
 </section>
 
@@ -165,9 +165,9 @@
   </div>
 
   <div class="doctors">
-    <div class="doc-card"><img src="assets/img/ms_joy.jpg" alt=""><h5>Dr. Joy</h5><span>Dentist</span></div>
-    <div class="doc-card"><img src="assets/img/dr_salamante.JPG" alt=""><h5>Dr. Paula Glenn Z. Salamante</h5><span>General Dentist</span></div>
-    <div class="doc-card"><img src="assets/img/ms_adele.jpg" alt=""><h5>Dr. Adele</h5><span>Dentist</span></div>
+    <div class="doc-card"><img src="/assets/img/ms_joy.jpg" alt=""><h5>Dr. Joy</h5><span>Dentist</span></div>
+    <div class="doc-card"><img src="/assets/img/dr_salamante.JPG" alt=""><h5>Dr. Paula Glenn Z. Salamante</h5><span>General Dentist</span></div>
+    <div class="doc-card"><img src="/assets/img/ms_adele.jpg" alt=""><h5>Dr. Adele</h5><span>Dentist</span></div>
   </div>
 </section>
 
@@ -195,14 +195,14 @@
 <!-- FORM CTA -->
 <section class="section container reveal">
   <div class="form-cta">
-    <img src="assets/img/banner.jpg" alt="">
+    <img src="/assets/img/banner.jpg" alt="">
     <div>
       <h2>Are you still not sure?</h2>
       <p class="formCtaLead">
         Our administrator will select a convenient schedule of visits and answer all questions.
       </p>
       <br>
-      <a class="btn light" href="login.php">Make Appointment</a>
+      <a class="btn light" href="/login.php">Make Appointment</a>
     </div>
   </div>
 </section>
@@ -228,7 +228,7 @@
 <footer>
   <div class="container">
     <div class="brand">
-      <img src="assets/img/logo.png" alt="logo"/>
+      <img src="/assets/img/logo.png" alt="logo"/>
       <div>
         <div class="brandTitle">ZNS</div>
         <div class="brandSub">Dental Clinic</div>
