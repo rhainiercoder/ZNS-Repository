@@ -9,35 +9,10 @@
 <body class="landingPage">
 
 <!-- HEADER -->
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <!-- Put your local logo here -->
-      <img src="assets/img/logo.png" alt="logo"/>
-      <div>
-        <div class="brandTitle">ZNS</div>
-        <div class="brandSub">Dental Clinic</div>
-      </div>
-    </div>
-
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About Us</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#doctors">Doctors</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
-        <li><a href="#contacts">Contact</a></li>
-      </ul>
-    </nav>
-
-    <div class="nav-actions">
-      <!-- Update these links if you later connect to PHP pages -->
-      <a class="btn light" href="/login.php">Login</a>
-      <a class="btn primary" href="/signup.php">Sign Up</a>
-    </div>
-  </div>
-</header>
+<?php
+$active = ""; // optional: "home", "about", etc, if your header uses it
+include __DIR__ . "/partials/header.php";
+?>
 
 <!-- HERO -->
 <section id="home" class="hero reveal">

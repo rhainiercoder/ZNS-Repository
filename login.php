@@ -54,34 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body class="authPage">
 
-  <header class="authTopbar">
-    <div class="authBrand2">
-      <div class="authLogoMark">
-        <img
-            src="assets/img/logo.png"
-            alt="ZNS Dental Clinic"
-            style="width:100%; height:100%; object-fit:contain; display:block;"
-          />
-      </div>
-      <div>
-        ZNS
-        <small>Dental Clinic</small>
-      </div>
-    </div>
-
-    <nav class="authNav">
-      <a href="index.php">Home</a>
-      <a href="index.php#about">About Us</a>
-      <a href="index.php#services">Services</a>
-      <a href="index.php#testimonials">Testimonials</a>
-      <a href="index.php#contact">Contact</a>
-    </nav>
-
-    <div class="authNavRight">
-      <a class="authBtnGhost" href="/login.php">Login</a>
-      <a class="authBtnPrimary" href="/signup.php">Sign up</a>
-    </div>
-  </header>
+<?php
+$active = ""; // optional: "home", "about", etc, if your header uses it
+include __DIR__ . "/partials/header.php";
+?>
 
   <div class="authShell">
     <section class="authHero">
