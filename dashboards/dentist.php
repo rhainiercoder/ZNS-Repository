@@ -99,7 +99,7 @@ for ($d = 1; $d <= 7; $d++) {
     }
   </style>
 </head>
-<body>
+<body class="app">
   <?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
   <main class="main">

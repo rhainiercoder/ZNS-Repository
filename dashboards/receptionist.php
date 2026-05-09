@@ -47,7 +47,7 @@ foreach ($rows as $r) {
   <title>Hello Receptionist Dashboard</title>
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
+<body class="app">
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">

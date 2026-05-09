@@ -77,7 +77,7 @@ $fallbackServiceImg = "teeth_icon.png";
   <title>Patient Dashboard - ZNS Dental Clinic</title>
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
+<body class="app">
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">

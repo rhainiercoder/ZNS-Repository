@@ -10,6 +10,10 @@ function active_class(string $key, string $active): string {
     return $key === $active ? " is-active" : "";
 }
 ?>
+<button class="sidebarToggle" type="button" onclick="document.body.classList.toggle('sidebar-open')">
+  ☰
+  </button>
+  
 <aside class="sidebar">
   <div class="sidebar__brand">
     <div class="sidebar__logo"><img src="/assets/img/logo.png" alt="ZNS" class="sidebarLogo" height=200 width=200></div>

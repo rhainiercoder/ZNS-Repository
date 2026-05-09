@@ -33,8 +33,8 @@
 
     <div class="nav-actions">
       <!-- Update these links if you later connect to PHP pages -->
-      <a class="btn light" href="login.php">Login</a>
-      <a class="btn primary" href="signup.php">Sign Up</a>
+      <a class="btn light" href="/login.php">Login</a>
+      <a class="btn primary" href="/signup.php">Sign Up</a>
     </div>
   </div>
 </header>
@@ -50,7 +50,7 @@
         Book appointments, meet your care team, and get modern dental treatment in a calm clinic built for families.
       </p>
       <div class="hero-actions">
-        <a class="btn primary" href="login.php">Make Appointment</a>
+        <a class="btn primary" href="/login.php">Make Appointment</a>
         <a class="btn light" href="#services">View Services</a>
       </div>
     </div>
