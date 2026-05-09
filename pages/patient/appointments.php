@@ -51,50 +51,69 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && empty($_POST["action"])) {
   $date       = trim($_POST["appointment_date"] ?? "");
   $time       = trim($_POST["appointment_time"] ?? "");
   $note       = trim($_POST["note"] ?? "");
+  $service_name = "";
 
   if ($service_id <= 0) $errors[] = "Please choose a service.";
   if ($date === "")     $errors[] = "Date is required.";
   if ($time === "")     $errors[] = "Time is required.";
 
   if (!$errors) {
-  date_default_timezone_set('Asia/Manila');
+    $stmt = $conn->prepare("SELECT name FROM services WHERE id = ? AND is_active = 1 LIMIT 1");
+    $stmt->bind_param("i", $service_id);
+    $stmt->execute();
+    $serviceRow = $stmt->get_result()->fetch_assoc();
 
-  $bufferMinutes = 15;
-  $today = date('Y-m-d');
-
-  if ($date < $today) {
-    $errors[] = "You cannot book an appointment in the past.";
-  } else {
-    $apptTs = strtotime($date . ' ' . $time);
-    $minTs = time() + ($bufferMinutes * 60);
-
-    if ($apptTs === false) {
-      $errors[] = "Invalid appointment date/time.";
-    } elseif ($date === $today && $apptTs <= $minTs) {
-      $errors[] = "For today, please choose a time at least {$bufferMinutes} minutes from now.";
+    if (!$serviceRow) {
+      $errors[] = "Please choose a valid service.";
+    } else {
+      $service_name = $serviceRow["name"];
     }
   }
-}
+
+  if (!$errors) {
+    date_default_timezone_set('Asia/Manila');
+
+    $bufferMinutes = 15;
+    $today = date('Y-m-d');
+
+    if ($date < $today) {
+      $errors[] = "You cannot book an appointment in the past.";
+    } else {
+      $apptTs = strtotime($date . ' ' . $time);
+      $minTs = time() + ($bufferMinutes * 60);
+
+      if ($apptTs === false) {
+        $errors[] = "Invalid appointment date/time.";
+      } elseif ($date === $today && $apptTs <= $minTs) {
+        $errors[] = "For today, please choose a time at least {$bufferMinutes} minutes from now.";
+      } elseif ((int)date('w', $apptTs) === 0) {
+        $errors[] = "Sunday is off duty. Please choose another day.";
+      }
+    }
+  }
 
   // Only INSERT if there are still no errors
   if (!$errors) {
-    $stmt = $conn->prepare("
-      INSERT INTO appointments (patient_id, service_id, appointment_date, appointment_time, status, note)
-      VALUES (?, ?, ?, ?, 'pending', ?)
-    ");
-    $stmt->bind_param("iisss", $user["id"], $service_id, $date, $time, $note);
+    $hasLegacyServiceColumn = (bool)$conn
+      ->query("SHOW COLUMNS FROM appointments LIKE 'service'")
+      ->fetch_assoc();
+
+    if ($hasLegacyServiceColumn) {
+      $stmt = $conn->prepare("
+        INSERT INTO appointments (patient_id, service_id, service, appointment_date, appointment_time, status, note)
+        VALUES (?, ?, ?, ?, ?, 'pending', ?)
+      ");
+      $stmt->bind_param("iissss", $user["id"], $service_id, $service_name, $date, $time, $note);
+    } else {
+      $stmt = $conn->prepare("
+        INSERT INTO appointments (patient_id, service_id, appointment_date, appointment_time, status, note)
+        VALUES (?, ?, ?, ?, 'pending', ?)
+      ");
+      $stmt->bind_param("iisss", $user["id"], $service_id, $date, $time, $note);
+    }
+
     $stmt->execute();
     $success = "Appointment request submitted (pending approval).";
-    $appointment_date = $_POST['appointment_date'] ?? '';
-    if ($appointment_date) {
-      $dow = (int)date('w', strtotime($appointment_date)); // 0 = Sunday
-      if ($dow === 0) {
-        $error = "Sunday is off duty. Please choose another day.";
-        // stop insert:
-        // - if you redirect: header("Location: ...?err=sunday"); exit;
-        // - if you show inline: just don't run INSERT when $error is set
-      }
-    }
   }
 }
 
