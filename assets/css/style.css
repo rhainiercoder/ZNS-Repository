@@ -2777,3 +2777,60 @@ body.landing .landingContactsCard{
   color:#fff;
   border-color:#0ea5a4;
 }
+
+@media (max-width: 768px) {
+  html, body { width: 100%; overflow-x: hidden; }
+
+  .sidebar {
+    position: sticky;   /* or: relative/static */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 20;
+    border-radius: 0;
+  }
+
+  .sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebarLogo {
+    max-width: 100%;
+    max-height: none;
+    font-size: 16px;
+  }
+
+  /* Make nav horizontal so it doesn't take the whole screen */
+  .sidebar__nav {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 12px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .sidebar__link {
+    white-space: nowrap;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .sidebar__footer {
+    border-top: 0;
+    padding-top: 10px;
+  }
+
+  /* IMPORTANT: remove any left offset from the main content */
+  .main,
+  .content,
+  .dashboard,
+  .dashboard-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
