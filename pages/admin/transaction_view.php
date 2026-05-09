@@ -30,7 +30,7 @@ if (!$tx) { http_response_code(404); die("Not found"); }
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">Transaction #<?php echo h($tx['id']); ?></h1>

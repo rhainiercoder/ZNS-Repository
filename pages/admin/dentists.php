@@ -201,7 +201,7 @@ $pages = (int)ceil($total / $perPage);
   </style>
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">Dentists</h1>

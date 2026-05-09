@@ -128,7 +128,7 @@ $err = $_GET["err"] ?? "";
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">

@@ -76,7 +76,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
   </style>
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Reports</h1></div>
 
