@@ -31,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ];
 
             if ($user["role"] === "admin" || $user["role"] === "staff") {
-                header("Location: /qm/dashboards/admin.php");
+                header("Location: dashboards/admin.php");
             } elseif ($user["role"] === "dentist") {
-                header("Location: /qm/dashboards/dentist.php");
+                header("Location: dashboards/dentist.php");
             } elseif ($user["role"] === "receptionist") {
-                header("Location: /qm/dashboards/receptionist.php");
+                header("Location: dashboards/receptionist.php");
             } else {
-                header("Location: /qm/dashboards/patient.php");
+                header("Location: dashboards/patient.php");
             }
             exit;
         }
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
   <meta charset="utf-8" />
   <title>Login - ZNS Dental Clinic</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="authPage">
 
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="authBrand2">
       <div class="authLogoMark">
         <img
-            src="/qm/assets/img/logo.png"
+            src="assets/img/logo.png"
             alt="ZNS Dental Clinic"
             style="width:100%; height:100%; object-fit:contain; display:block;"
           />
@@ -69,22 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 
     <nav class="authNav">
-      <a href="/qm/index.php">Home</a>
-      <a href="/qm/index.php#about">About Us</a>
-      <a href="/qm/index.php#services">Services</a>
-      <a href="/qm/index.php#testimonials">Testimonials</a>
-      <a href="/qm/index.php#contact">Contact</a>
+      <a href="index.php">Home</a>
+      <a href="index.php#about">About Us</a>
+      <a href="index.php#services">Services</a>
+      <a href="index.php#testimonials">Testimonials</a>
+      <a href="index.php#contact">Contact</a>
     </nav>
 
     <div class="authNavRight">
-      <a class="authBtnGhost" href="/qm/login.php">Login</a>
-      <a class="authBtnPrimary" href="/qm/signup.php">Sign up</a>
+      <a class="authBtnGhost" href="login.php">Login</a>
+      <a class="authBtnPrimary" href="signup.php">Sign up</a>
     </div>
   </header>
 
   <div class="authShell">
     <section class="authHero">
-      <img class="authHero__img" src="/qm/assets/img/facility_2.jpg" alt="ZNS Dental Clinic">
+      <img class="authHero__img" src="assets/img/facility_2.jpg" alt="ZNS Dental Clinic">
       <div class="authHero__overlay"></div>
 
       <div class="authQuote">
@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <button class="authSubmit" type="submit">Log in</button>
 
         <div class="authBottomText">
-          Not member yet? <a href="/qm/signup.php">Create an account</a>
+          Not member yet? <a href="signup.php">Create an account</a>
         </div>
       </form>
     </section>
