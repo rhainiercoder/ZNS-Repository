@@ -2824,122 +2824,93 @@ body.landing .landingContactsCard{
 }
 
 /* Desktop default */
-.topnav__toggle { display:none; }
-.topnav__burger { display:none; }
+/* ============================
+   HEADER (hardcoded pages)
+   Classes used:
+   .siteHeader .container.nav .brand .siteNav .nav-actions
+   .navToggle .navBurger
+   ============================ */
 
-/* Mobile */
-@media (max-width: 768px){
-  .topnav__inner{
-    flex-wrap: wrap;
-  }
-
-  .topnav__burger{
-    display:block;
-    margin-left:auto;
-    font-size:28px;
-    line-height:1;
-    padding:10px 12px;
-    cursor:pointer;
-    user-select:none;
-  }
-
-  /* hide menu by default */
-  .topnav__links,
-  .topnav__actions{
-    display:none;
-    width:100%;
-  }
-
-  /* show when checked */
-  .topnav__toggle:checked ~ .topnav__links,
-  .topnav__toggle:checked ~ .topnav__actions{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    padding:10px 0;
-  }
-
-  .topnav__link,
-  .topnav__btn{
-    width:100%;
-    text-align:left;
-  }
+/* Desktop layout */
+.siteHeader{
+  width: 100%;
 }
 
-@media (max-width: 768px){
-  .topnav__links,
-  .topnav__actions{
-    display:none !important;
-  }
-
-  .topnav__toggle:checked ~ .topnav__links,
-  .topnav__toggle:checked ~ .topnav__actions{
-    display:flex !important;
-  }
-}
-
-/* ===== Header desktop ===== */
 .container.nav{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .siteNav ul{
-  list-style:none;
-  display:flex;
-  gap:18px;
-  margin:0;
-  padding:0;
+  list-style: none;
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
 }
 
-/* hide hamburger on desktop */
-.navToggle{ display:none; }
-.navBurger{ display:none; }
+/* Hide hamburger on desktop */
+.navToggle{ display: none; }
+.navBurger{ display: none; }
 
-/* ===== Header mobile ===== */
+/* Mobile (hamburger) */
 @media (max-width: 768px){
-  .container.nav{ flex-wrap:wrap; }
-
-  .navBurger{
-    display:block;
-    margin-left:auto;
-    font-size:28px;
-    line-height:1;
-    padding:10px 12px;
-    cursor:pointer;
-    user-select:none;
+  /* allow items to wrap */
+  .container.nav{
+    flex-wrap: wrap;
   }
 
-  /* hide menus by default */
+  /* show hamburger button */
+  .navBurger{
+    display: block !important;
+    margin-left: auto;
+    font-size: 28px;
+    line-height: 1;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* IMPORTANT: hide nav + actions by default on mobile */
   .siteNav,
   .nav-actions{
-    display:none;
-    width:100%;
+    display: none !important;
+    width: 100%;
   }
 
-  /* show when toggled */
+  /* show when checked */
   .navToggle:checked ~ .siteNav,
   .navToggle:checked ~ .nav-actions{
-    display:block;
+    display: block !important;
   }
 
+  /* stack menu items vertically */
   .siteNav ul{
-    flex-direction:column;
-    gap:10px;
-    padding:10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
   }
 
+  /* stack buttons vertically */
   .nav-actions{
-    padding:10px 0;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .nav-actions .btn{
-    width:100%;
-    text-align:center;
+    width: 100%;
+    text-align: center;
   }
 }
