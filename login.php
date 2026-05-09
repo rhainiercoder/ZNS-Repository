@@ -3,10 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require __DIR__ . "/db.php";
-
-$isHome = false;
-include __DIR__ . "/partials/header.php";
-
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -57,10 +53,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body class="authPage">
 
-<?php
-$active = ""; // optional: "home", "about", etc, if your header uses it
-include __DIR__ . "/partials/header.php";
-?>
+<header class="siteHeader">
+  <div class="container nav">
+    <div class="brand">
+      <img src="/assets/img/logo.png" alt="logo"/>
+      <div>
+        <div class="brandTitle">ZNS</div>
+        <div class="brandSub">Dental Clinic</div>
+      </div>
+    </div>
+
+    <!-- hamburger toggle -->
+    <input id="siteNavToggle" class="navToggle" type="checkbox">
+    <label for="siteNavToggle" class="navBurger" aria-label="Menu">☰</label>
+
+    <nav class="siteNav">
+      <ul>
+        <li><a href="/index.php#home">Home</a></li>
+        <li><a href="/index.php#about">About Us</a></li>
+        <li><a href="/index.php#services">Services</a></li>
+        <li><a href="/index.php#doctors">Doctors</a></li>
+        <li><a href="/index.php#testimonials">Testimonials</a></li>
+        <li><a href="/index.php#contacts">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="btn light" href="/login.php">Login</a>
+      <a class="btn primary" href="/signup.php">Sign Up</a>
+    </div>
+  </div>
+</header>
 
   <div class="authShell">
     <section class="authHero">
