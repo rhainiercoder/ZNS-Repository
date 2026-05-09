@@ -22,11 +22,11 @@ $active = $active ?? ""; // e.g. "home", "about", "services", "testimonials", "c
 
     <div class="topnav__actions">
       <?php if (!empty($_SESSION["user_id"])): ?>
-        <a class="topnav__btn topnav__btn--ghost" href="dashboard.php">Dashboard</a>
-        <a class="topnav__btn topnav__btn--primary" href="logout.php">Logout</a>
+        <a class="topnav__btn topnav__btn--ghost" href="/dashboard.php">Dashboard</a>
+        <a class="topnav__btn topnav__btn--primary" href="/logout.php">Logout</a>
       <?php else: ?>
-        <a class="topnav__btn topnav__btn--ghost" href="login.php">Login</a>
-        <a class="topnav__btn topnav__btn--primary" href="signup.php">Sign up</a>
+        <a class="topnav__btn topnav__btn--ghost" href="/login.php">Login</a>
+        <a class="topnav__btn topnav__btn--primary" href="/signup.php">Sign up</a>
       <?php endif; ?>
     </div>
   </div>

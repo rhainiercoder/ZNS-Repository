@@ -56,6 +56,6 @@ function active_class(string $key, string $active): string {
   </nav>
 
   <div class="sidebar__footer">
-    <a class="sidebar__logout" href="logout.php">Log out</a>
+    <a class="sidebar__logout" href="/logout.php">Log out</a>
   </div>
 </aside>

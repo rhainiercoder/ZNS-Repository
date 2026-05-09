@@ -77,8 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </nav>
 
     <div class="authNavRight">
-      <a class="authBtnGhost" href="login.php">Login</a>
-      <a class="authBtnPrimary" href="signup.php">Sign up</a>
+      <a class="authBtnGhost" href="/login.php">Login</a>
+      <a class="authBtnPrimary" href="/signup.php">Sign up</a>
     </div>
   </header>
 
@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <button class="authSubmit" type="submit">Log in</button>
 
         <div class="authBottomText">
-          Not member yet? <a href="signup.php">Create an account</a>
+          Not member yet? <a href="/signup.php">Create an account</a>
         </div>
       </form>
     </section>

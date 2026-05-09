@@ -235,7 +235,7 @@
 
     <div class="footerCopy">© 2026 ZNS Dental Clinic</div>
 
-    <a class="btn primary" href="login.php">Make Appointment</a>
+    <a class="btn primary" href="/login.php">Make Appointment</a>
   </div>
 </footer>
 

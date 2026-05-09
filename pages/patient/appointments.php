@@ -1,10 +1,11 @@
 <?php
 require_once __DIR__ . "/../../auth.php";
+require_once __DIR__ . "/../../db.php";
+
 $user = require_role(["patient"]);
 $role = $user["role"];
 $active = "appointments";
 
-require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $errors = [];
