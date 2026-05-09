@@ -45,7 +45,7 @@
 <section id="home" class="hero reveal">
   <div class="container hero-grid">
     <div>
-      <br>
+      <br><br>
       <p class="eyebrow">ZNS Dental Clinic - Valenzuela City</p>
       <h1>Elevating smiles, one patient at a time</h1>
       <p>
@@ -79,7 +79,7 @@
   </div>
 
   <div class="about-text">
-    <br>
+    <br><br>
     <h4>ABOUT US</h4>
     <h2>Patient health is the highest value in our work</h2>
     <p>
@@ -94,7 +94,7 @@
 <section id="services" class="section reveal section--services">
   <div class="container">
     <div class="section-title">
-      <br>
+      <br><br>
       <h3>SERVICES</h3>
       <h2>High quality services for you</h2>
     </div>
@@ -159,7 +159,7 @@
 <!-- DOCTORS -->
 <section id="doctors" class="section container reveal">
   <div class="section-title">
-    <br>
+    <br><br>
     <h3>DOCTORS</h3>
     <h2>Meet the Crew</h2>
   </div>
@@ -174,7 +174,7 @@
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="section container reveal">
   <div class="section-title">
-    <br>
+    <br><br>
     <h3>TESTIMONIALS</h3>
     <h2>Our Happy Clients</h2>
     <p class="testimonialsLead">
@@ -210,7 +210,7 @@
 <!-- CONTACTS / MAP -->
 <section id="contacts" class="section container reveal">
   <div class="section-title">
-    <br>
+    <br><br>
     <h3>CONTACTS &amp; LOCATION</h3>
     <h2>Visit ZNS Dental Clinic</h2>
   </div>

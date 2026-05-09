@@ -7,6 +7,7 @@ $role = $user["role"];
 $active = "transactions";
 
 function h($v){ return htmlspecialchars((string)$v); }
+function refund_note_prefix(int $txId): string { return "Refund for transaction #{$txId}"; }
 
 /* Handle POST actions: refund (receptionist) */
 $flash = "";
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
       $flash = "Invalid transaction id.";
     } else {
       // load original transaction
-      $stmt = $conn->prepare("SELECT id, user_id, appointment_id, amount, status FROM transactions WHERE id = ? LIMIT 1");
+      $stmt = $conn->prepare("SELECT id, user_id, appointment_id, amount, type, status FROM transactions WHERE id = ? LIMIT 1");
       $stmt->bind_param("i", $txId);
       $stmt->execute();
       $orig = $stmt->get_result()->fetch_assoc();
@@ -26,8 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
         $flash = "Transaction not found.";
       } elseif ($orig['type'] === 'refund') {
         $flash = "Cannot refund a refund.";
+      } elseif ($orig['status'] !== 'success') {
+        $flash = "Only successful payments can be refunded.";
       } else {
-        // create refund transaction (type=refund) and mark original as refunded
+        $prefix = refund_note_prefix($txId);
+        $check = $conn->prepare("SELECT id FROM transactions WHERE type = 'refund' AND note LIKE CONCAT(?, '%') LIMIT 1");
+        $check->bind_param("s", $prefix);
+        $check->execute();
+        if ($check->get_result()->fetch_assoc()) {
+          $flash = "This transaction has already been refunded.";
+          header("Location: /pages/receptionist/transactions.php?msg=" . urlencode($flash));
+          exit;
+        }
+        // Create a refund transaction; "refunded" is not a valid status in this schema.
         $refundNote = "Refund for transaction #{$txId} — " . ($_POST['note'] ?? '');
         $ins = $conn->prepare("INSERT INTO transactions (user_id, appointment_id, invoice_number, amount, currency, method, type, status, note) VALUES (?, ?, ?, ?, 'PHP', ?, 'refund', 'success', ?)");
         $invoice = 'R-' . time() . '-' . rand(100,999);
@@ -36,17 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
         $ins->bind_param("iisdss", $orig['user_id'], $orig['appointment_id'], $invoice, $amt, $method, $refundNote);
         $ins->execute();
 
-        // mark original as refunded (status)
-        $u = $conn->prepare("UPDATE transactions SET status = 'refunded' WHERE id = ?");
-        $u->bind_param("i", $txId);
-        $u->execute();
-
         $flash = "Refund created (ID: " . $ins->insert_id . ").";
       }
     }
   }
   // redirect to avoid double-post
-  header("Location: pages/receptionist/transactions.php?msg=" . urlencode($flash));
+  header("Location: /pages/receptionist/transactions.php?msg=" . urlencode($flash));
   exit;
 }
 
@@ -59,6 +66,9 @@ $to   = $_GET['to'] ?? '';
 $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 20;
 $offset = ($page - 1) * $perPage;
+
+if (!in_array($type, ['', 'payment', 'refund'], true)) $type = '';
+if (!in_array($status, ['', 'success', 'pending', 'failed'], true)) $status = '';
 
 // build query with params
 $where = [];
@@ -100,7 +110,17 @@ $pages = (int)ceil($total / $perPage);
 
 // fetch page
 $sql = "
-  SELECT t.*, u.name AS user_name, a.appointment_date, a.appointment_time
+  SELECT
+    t.*,
+    u.name AS user_name,
+    a.appointment_date,
+    a.appointment_time,
+    EXISTS(
+      SELECT 1
+      FROM transactions r
+      WHERE r.type = 'refund'
+        AND r.note LIKE CONCAT('Refund for transaction #', t.id, '%')
+    ) AS has_refund
   FROM transactions t
   LEFT JOIN users u ON u.id = t.user_id
   LEFT JOIN appointments a ON a.id = t.appointment_id
@@ -142,7 +162,7 @@ $msg = $_GET['msg'] ?? '';
     <form method="get" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
       <input name="q" value="<?php echo h($q); ?>" placeholder="Search invoice, user, note..." class="authInput w-360">
       <select name="type" class="authInput"><option value="">All types</option><option value="payment" <?php if($type==='payment')echo 'selected';?>>Payment</option><option value="refund" <?php if($type==='refund')echo 'selected';?>>Refund</option></select>
-      <select name="status" class="authInput"><option value="">All status</option><option value="success" <?php if($status==='success')echo 'selected';?>>Success</option><option value="pending" <?php if($status==='pending')echo 'selected';?>>Pending</option><option value="failed" <?php if($status==='failed')echo 'selected';?>>Failed</option><option value="refunded" <?php if($status==='refunded')echo 'selected';?>>Refunded</option></select>
+      <select name="status" class="authInput"><option value="">All status</option><option value="success" <?php if($status==='success')echo 'selected';?>>Success</option><option value="pending" <?php if($status==='pending')echo 'selected';?>>Pending</option><option value="failed" <?php if($status==='failed')echo 'selected';?>>Failed</option></select>
       <input type="date" name="from" value="<?php echo h($from); ?>" class="authInput">
       <input type="date" name="to" value="<?php echo h($to); ?>" class="authInput">
       <button class="btn btn--dark" type="submit">Filter</button>
@@ -169,7 +189,7 @@ $msg = $_GET['msg'] ?? '';
           <div class="table__right">₱<?php echo number_format((float)$r['amount'],2); ?></div>
           <div class="table__right">
             <a class="btn" href="/pages/receptionist/transaction_view.php?id=<?php echo (int)$r['id']; ?>">View</a>
-            <?php if ($r['type'] === 'payment' && $r['status'] === 'success'): ?>
+            <?php if ($r['type'] === 'payment' && $r['status'] === 'success' && empty($r['has_refund'])): ?>
               <form method="post" style="display:inline-block;margin-left:6px;" onsubmit="return confirm('Issue refund for this transaction?');">
                 <input type="hidden" name="id" value="<?php echo (int)$r['id']; ?>">
                 <input type="hidden" name="action" value="refund">

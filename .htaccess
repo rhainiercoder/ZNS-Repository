@@ -1,0 +1,7 @@
+DirectoryIndex index.php
+
+RewriteEngine On
+
+# Allow old/local subfolder URLs to work when the app is deployed at domain root.
+RewriteRule ^(qm|happy-teeth)/?$ index.php [L,QSA]
+RewriteRule ^(qm|happy-teeth)/(.*)$ $2 [L,QSA]

@@ -2750,11 +2750,13 @@ body.landing .landingContactsCard{
   border:1px solid rgba(0,0,0,.1);
   border-radius:12px;
   padding:12px;
+  max-width:100%;
+  overflow:hidden;
 }
 
 .toothChart__row{
   display:grid;
-  grid-template-columns: repeat(16, 1fr);
+  grid-template-columns: repeat(16, minmax(0, 1fr));
   gap:8px;
 }
 
@@ -2792,6 +2794,11 @@ body.landing .landingContactsCard{
 
 /* mobile drawer */
 @media (max-width: 768px){
+  .main, .app__main{
+    margin-left:0;
+    padding:68px 10px 16px;
+  }
+
   .sidebar{
     position: fixed;
     top: 0;

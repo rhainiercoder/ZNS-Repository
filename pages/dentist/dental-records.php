@@ -224,8 +224,8 @@ if ($patient_id > 0) {
   <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     /* ensure visible teal marking even if style.css hasn't been updated yet */
-    .toothChart{ background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; padding:12px; }
-    .toothChart__row{ display:grid; grid-template-columns:repeat(16, 1fr); gap:8px; }
+    .toothChart{ background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; padding:12px; max-width:100%; overflow:hidden; }
+    .toothChart__row{ display:grid; grid-template-columns:repeat(16, minmax(0, 1fr)); gap:8px; }
     .toothChart__label{ margin:10px 0 6px; font-weight:900; color:#0b2f4f; }
     .tooth{
       height:38px; border-radius:10px; border:1px solid rgba(0,0,0,.2);
@@ -235,7 +235,7 @@ if ($patient_id > 0) {
 
     @media (max-width: 640px){
       .dentistRecordsPage .toothChart{
-        padding:10px 8px;
+        padding:10px 6px;
         border-radius:12px;
         overflow-x:hidden;
       }
@@ -255,15 +255,17 @@ if ($patient_id > 0) {
       }
 
       .dentistRecordsPage .toothChart__row{
-        grid-template-columns:repeat(8, minmax(34px, 1fr)) !important;
-        gap:6px;
+        grid-template-columns:repeat(8, minmax(0, 1fr)) !important;
+        gap:5px;
       }
 
       .dentistRecordsPage .tooth{
-        min-width:34px;
-        height:42px;
-        border-radius:9px;
-        font-size:14px;
+        width:100%;
+        min-width:0;
+        height:auto;
+        aspect-ratio:1 / 1;
+        border-radius:8px;
+        font-size:13px;
         touch-action:manipulation;
       }
 
@@ -388,7 +390,7 @@ if ($patient_id > 0) {
         </label>
 
         <div style="display:flex; justify-content:flex-end; gap:10px;">
-          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="/pages/dentist/dashboards/dentist.php">Back to Dashboard</a>
+          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="/dashboards/dentist.php">Back to Dashboard</a>
           <button class="btn btn--dark" type="submit">Save Record</button>
         </div>
       </form>
@@ -436,8 +438,7 @@ if ($patient_id > 0) {
       <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
         <h2 class="sectionTitle" style="margin:0;">Compiled Records</h2>
 
-        <!-- NOTE: this points to /dentist/ so it won't be Forbidden. Create this page or change back to /admin/ if you prefer. -->
-        <a class="btn primary" href="/pages/dentist/print_dental_records.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">
+        <a class="btn primary" href="/pages/admin/print_dental_record.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">
           Print All Records
         </a>
       </div>
