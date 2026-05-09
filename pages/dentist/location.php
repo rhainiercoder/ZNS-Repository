@@ -42,7 +42,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
   </style>
 </head>
 <body>
-<?php require_once __DIR__ . "/../partials/sidebar.php"; ?>
+<?php require_once __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Location &amp; Map</h1></div>

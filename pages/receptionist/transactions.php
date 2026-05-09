@@ -128,7 +128,7 @@ $msg = $_GET['msg'] ?? '';
   <style>.tx-row{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-bottom:1px solid rgba(11,31,42,.06)}</style>
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Transactions</h1></div>
 

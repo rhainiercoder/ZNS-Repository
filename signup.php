@@ -9,11 +9,11 @@ $success = "";
 if (!empty($_SESSION["user"]["role"])) {
     $role = $_SESSION["user"]["role"];
     if ($role === "admin" || $role === "staff") {
-        header("Location: dashboards/admin.php");
+        header("Location: /dashboards/admin.php");
     } elseif ($role === "dentist") {
-        header("Location: dashboards/dentist.php");
+        header("Location: /dashboards/dentist.php");
     } else {
-        header("Location: dashboards/patient.php");
+        header("Location: /dashboards/patient.php");
     }
     exit;
 }

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../../auth.php";
 $user = require_role(["dentist"]);
 $role = $user["role"];
 $active = "records";
@@ -233,7 +233,7 @@ if ($patient_id > 0) {
   </style>
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead">

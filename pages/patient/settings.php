@@ -104,7 +104,7 @@ $msg = $_GET['msg'] ?? '';
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<?php require_once __DIR__ . "/../partials/sidebar.php"; ?>
+<?php require_once __DIR__ . "/../../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Settings</h1></div>
   <?php if ($msg): ?><div class="card callout callout--ok"><?php echo h($msg); ?></div><?php endif; ?>

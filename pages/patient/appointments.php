@@ -124,7 +124,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead">
