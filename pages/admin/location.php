@@ -31,7 +31,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
 <head>
   <meta charset="utf-8" />
   <title>Location & Map - <?php echo h($clinic_name); ?></title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 
   <!-- Leaflet CSS (no integrity attribute to avoid blocking) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>

@@ -17,11 +17,11 @@ $role       = $_SESSION["user"]["role"] ?? "";
 
 // Route dashboard link based on role
 if ($role === "admin" || $role === "staff") {
-    $dashUrl = "dashboards/admin.php";
+    $dashUrl = "/dashboards/admin.php";
 } elseif ($role === "dentist") {
-    $dashUrl = "dashboards/dentist.php";
+    $dashUrl = "/dashboards/dentist.php";
 } else {
-    $dashUrl = "dashboards/patient.php";
+    $dashUrl = "/dashboards/patient.php";
 }
 
 function topnav_active(string $key, string $active): string {
@@ -30,10 +30,10 @@ function topnav_active(string $key, string $active): string {
 ?>
 <header class="topnav">
   <div class="topnav__inner">
-    <a class="topnav__brand" href="index.php">
+    <a class="topnav__brand" href="/index.php">
       <img
         class="topnav__brandImg"
-        src="assets/img/logo.png"
+        src="/assets/img/logo.png"
         alt="ZNS logo"
       />
       <div>
@@ -44,15 +44,15 @@ function topnav_active(string $key, string $active): string {
 
     <nav class="topnav__links">
       <a class="topnav__link<?php echo topnav_active('home', $active); ?>"
-         href="index.php#home">Home</a>
+         href="/index.php#home">Home</a>
       <a class="topnav__link<?php echo topnav_active('about', $active); ?>"
-         href="index.php#about">About Us</a>
+         href="/index.php#about">About Us</a>
       <a class="topnav__link<?php echo topnav_active('services', $active); ?>"
-         href="index.php#services">Services</a>
+         href="/index.php#services">Services</a>
       <a class="topnav__link<?php echo topnav_active('testimonials', $active); ?>"
-         href="index.php#testimonials">Testimonials</a>
+         href="/index.php#testimonials">Testimonials</a>
       <a class="topnav__link<?php echo topnav_active('contact', $active); ?>"
-         href="index.php#contacts">Contact</a>
+         href="/index.php#contacts">Contact</a>
     </nav>
 
     <div class="topnav__actions">
@@ -60,12 +60,12 @@ function topnav_active(string $key, string $active): string {
         <a class="topnav__btn topnav__btn--ghost"
            href="<?php echo htmlspecialchars($dashUrl); ?>">Dashboard</a>
         <a class="topnav__btn topnav__btn--primary"
-           href="logout.php">Logout</a>
+           href="/pages/auth/logout.php">Logout</a>
       <?php else: ?>
         <a class="topnav__btn topnav__btn--ghost"
-           href="login.php">Login</a>
+           href="/pages/auth/login.php">Login</a>
         <a class="topnav__btn topnav__btn--primary"
-           href="signup.php">Sign Up</a>
+           href="/pages/auth/signup.php">Sign Up</a>
       <?php endif; ?>
     </div>
   </div>

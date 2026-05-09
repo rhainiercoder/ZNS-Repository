@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $dentist_id = (int)($_POST["dentist_id"] ?? 0);
       if ($dentist_id <= 0) {
         // simple fail-safe: redirect with no change
-        $redirect = "pages/admin/appointments.php";
+        $redirect = "/pages/admin/appointments.php";
           if (!empty($_POST["patient_id"])) {
             $redirect .= "?patient_id=" . (int)$_POST["patient_id"];
           }
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
       $reason = trim($_POST["decline_reason"] ?? "");
     if ($reason === "") {
-      header("Location: pages/admin/appointments.php?err=decline_reason_required");
+      header("Location: /pages/admin/appointments.php?err=decline_reason_required");
       exit;
     }
     $now = date('Y-m-d H:i:s');
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
-  header("Location: pages/admin/appointments.php");
+  header("Location: /pages/admin/appointments.php");
   exit;
 }
 
@@ -131,7 +131,7 @@ $err = $_GET["err"] ?? "";
 <head>
   <meta charset="utf-8" />
   <title>Admin - Appointments</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -143,7 +143,7 @@ $err = $_GET["err"] ?? "";
   </h1>
 
   <?php if ($patient_id): ?>
-    <a class="btn light" href="pages/admin/appointments.php">Back to Patients</a>
+    <a class="btn light" href="/pages/admin/appointments.php">Back to Patients</a>
   <?php endif; ?>
 </div>
 
@@ -191,7 +191,7 @@ $err = $_GET["err"] ?? "";
           </div>
 
           <div style="text-align:right;">
-            <a class="btn light" href="pages/admin/appointments.php?patient_id=<?php echo (int)$p["patient_id"]; ?>">
+            <a class="btn light" href="/pages/admin/appointments.php?patient_id=<?php echo (int)$p["patient_id"]; ?>">
               View Appointments
             </a>
           </div>

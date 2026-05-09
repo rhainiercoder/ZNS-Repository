@@ -287,7 +287,7 @@ try {
     </div>
 
     <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
-      <a class="btn btn--dark" href="pages/admin/appointments.php">Open Appointments</a>
+      <a class="btn btn--dark" href="/pages/admin/appointments.php">Open Appointments</a>
     </div>
   </div>
 
@@ -496,7 +496,7 @@ try {
       </div>
 
       <div class="adminTransactions__actions">
-        <a class="btn btn--dark" href="pages/admin/transactions.php">View All Transactions</a>
+        <a class="btn btn--dark" href="/pages/admin/transactions.php">View All Transactions</a>
       </div>
     </section>
   </main>

@@ -189,7 +189,7 @@ $pages = (int)ceil($total / $perPage);
 <head>
   <meta charset="utf-8" />
   <title>Admin - Dentists</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     /* small inline styles for availability rows layout (keeps file self-contained) */
     .avail-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }

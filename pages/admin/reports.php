@@ -70,7 +70,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
   <meta charset="utf-8" />
   <title>Admin - Reports</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     .report-row{ display:flex; justify-content:space-between; gap:12px; padding:12px; border-bottom:1px solid rgba(11,31,42,.06); }
   </style>
@@ -102,8 +102,8 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div style="display:flex; gap:8px; align-items:center;">
-              <a class="btn" href="pages/admin/print_dental_record.php?id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
-              <a class="btn" href="pages/admin/dental-records.php?service_id=<?php echo (int)$r['service']; ?>">Open</a>
+              <a class="btn" href="/pages/admin/print_dental_record.php?id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
+              <a class="btn" href="/pages/admin/dental-records.php?service_id=<?php echo (int)$r['service']; ?>">Open</a>
             </div>
           </div>
         <?php endforeach; ?>

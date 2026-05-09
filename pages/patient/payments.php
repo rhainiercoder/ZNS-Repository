@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 $user = require_role(["patient"]);
 $role = $user["role"];
 $active = "payments";
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
   }
   $redirectMsg = $ok ?: $err;
   $redirectKey = $ok ? "ok" : "err";
-  header("Location: pages/patient/payments.php?" . $redirectKey . "=" . urlencode($redirectMsg));
+  header("Location: /pages/patient/payments.php?" . $redirectKey . "=" . urlencode($redirectMsg));
   exit;
 }
 
@@ -102,7 +102,7 @@ $err = $_GET['err'] ?? $err;
 <head>
   <meta charset="utf-8" />
   <title>Payment History</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>

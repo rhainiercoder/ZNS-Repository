@@ -28,7 +28,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
   <meta charset="utf-8" />
   <title>Dentist - Today's Patient</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -55,7 +55,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
           <div style="text-align:right;">
             <a class="btn btn--dark"
-              href="pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
+              href="/pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
               Add Record
             </a>
           </div>

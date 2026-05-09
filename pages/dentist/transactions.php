@@ -23,7 +23,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <!doctype html>
 <html>
 <head><meta charset="utf-8" /><title>Dentist - Transaction History</title>
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>

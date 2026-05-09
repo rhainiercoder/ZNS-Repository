@@ -219,7 +219,7 @@ if ($patient_id > 0) {
 <head>
   <meta charset="utf-8" />
   <title>Dentist - Dental Records</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     /* ensure visible teal marking even if style.css hasn't been updated yet */
     .toothChart{ background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; padding:12px; }
@@ -244,7 +244,7 @@ if ($patient_id > 0) {
           Phone: <?php echo h($patient['phone'] ?? '—'); ?> / Email: <?php echo h($patient['email'] ?? '—'); ?>
         </div>
       </div>
-      <a class="btn light" href="pages/dentist/dental-records.php">Back to Patients</a>
+      <a class="btn light" href="/pages/dentist/dental-records.php">Back to Patients</a>
     <?php else: ?>
       <div>
         <h1 class="pageHead__title">Dental Records (Patients)</h1>
@@ -326,7 +326,7 @@ if ($patient_id > 0) {
         </label>
 
         <div style="display:flex; justify-content:flex-end; gap:10px;">
-          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="pages/dentist/dashboards/dentist.php">Back to Dashboard</a>
+          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="/pages/dentist/dashboards/dentist.php">Back to Dashboard</a>
           <button class="btn btn--dark" type="submit">Save Record</button>
         </div>
       </form>
@@ -357,7 +357,7 @@ if ($patient_id > 0) {
               <div style="font-size:13px; color:#6f7b86;"><?php echo $row['last_record'] ? h(substr($row['last_record'], 0, 10)) : '—'; ?></div>
             </div>
             <div style="text-align:right;">
-              <a class="btn light" href="pages/dentist/dental-records.php?patient_id=<?php echo (int)$row['patient_id']; ?>">View Records</a>
+              <a class="btn light" href="/pages/dentist/dental-records.php?patient_id=<?php echo (int)$row['patient_id']; ?>">View Records</a>
             </div>
           </div>
         <?php endforeach; ?>
@@ -375,7 +375,7 @@ if ($patient_id > 0) {
         <h2 class="sectionTitle" style="margin:0;">Compiled Records</h2>
 
         <!-- NOTE: this points to /dentist/ so it won't be Forbidden. Create this page or change back to /admin/ if you prefer. -->
-        <a class="btn primary" href="pages/dentist/print_dental_records.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">
+        <a class="btn primary" href="/pages/dentist/print_dental_records.php?patient_id=<?php echo (int)$patient_id; ?>" target="_blank">
           Print All Records
         </a>
       </div>

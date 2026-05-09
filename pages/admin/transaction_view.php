@@ -27,7 +27,7 @@ if (!$tx) { http_response_code(404); die("Not found"); }
 <!doctype html>
 <html>
 <head><meta charset="utf-8" /><title>Transaction #<?php echo h($tx['id']); ?></title>
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -60,7 +60,7 @@ if (!$tx) { http_response_code(404); die("Not found"); }
     <?php endif; ?>
 
     <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
-      <a class="btn" href="pages/admin/transactions.php">Back</a>
+      <a class="btn" href="/pages/admin/transactions.php">Back</a>
     </div>
   </section>
 </main>

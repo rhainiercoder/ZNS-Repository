@@ -56,7 +56,7 @@ while ($row = $res->fetch_assoc()) {
     'backgroundColor' => $themeBlue,
     'borderColor' => $themeBlue,
     'textColor' => '#ffffff',
-    'url' => "pages/admin/appointments.php?appointment_id=" . (int)$row['id'],
+    'url' => "/pages/admin/appointments.php?appointment_id=" . (int)$row['id'],
   ];
 }
 

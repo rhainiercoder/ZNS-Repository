@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  header("Location: pages/dentist/settings.php?msg=" . urlencode($flash));
+  header("Location: /pages/dentist/settings.php?msg=" . urlencode($flash));
   exit;
 }
 
@@ -118,7 +118,7 @@ $msg = $_GET['msg'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>Dentist Settings</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <style>.hoursTable{display:grid;gap:6px;}</style>
 </head>
 <body>
