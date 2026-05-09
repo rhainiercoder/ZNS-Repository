@@ -2914,3 +2914,44 @@ body.landing .landingContactsCard{
     text-align: center;
   }
 }
+
+/* --- HARD FIX: logo and header sizing (desktop + mobile) --- */
+.siteHeader{
+  padding: 14px 0;
+}
+
+.brand img{
+  width: 56px;           /* controls the huge logo */
+  height: 56px;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.brandTitle{
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.brandSub{
+  font-size: 14px;
+  opacity: .85;
+  line-height: 1.2;
+}
+
+/* keep nav from stretching weirdly */
+.siteNav{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* keep buttons tight */
+.nav-actions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* OPTIONAL: prevent any image rule from blowing up the logo */
+.brand img{ max-width: 56px; max-height: 56px; }
