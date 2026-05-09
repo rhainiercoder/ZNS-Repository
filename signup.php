@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
   <meta charset="utf-8" />
   <title>Sign up - ZNS Dental Clinic</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body class="authPage">
 
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   <div class="authShell">
     <section class="authHero">
-      <img class="authHero__img" src="assets/img/facility.jpg" alt="ZNS Dental Clinic">
+      <img class="authHero__img" src="/assets/img/facility.jpg" alt="ZNS Dental Clinic">
       <div class="authHero__overlay"></div>
 
       <div class="authQuote">
