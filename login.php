@@ -4,6 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require __DIR__ . "/db.php";
 
+$isHome = false;
+include __DIR__ . "/partials/header.php";
+
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

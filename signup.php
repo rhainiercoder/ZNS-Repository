@@ -2,6 +2,10 @@
 session_start();
 require __DIR__ . "/db.php";
 
+$isHome = false;
+include __DIR__ . "/partials/header.php";
+
+$error = "";
 $error = "";
 $success = "";
 

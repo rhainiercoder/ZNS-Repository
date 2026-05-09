@@ -1,37 +1,43 @@
 <?php
 // partials/header.php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// REQUIREMENT: call session_start(); in the page BEFORE any HTML output.
 
-$active = $active ?? ""; // "home", "about", "services", "testimonials", "contact"
+$active = $active ?? "";              // optional: "home", "about", ...
+$isHome = $isHome ?? false;           // set true in index.php if you want pure # anchors
+$homePrefix = $isHome ? "" : "/index.php"; // other pages link back to index sections
 ?>
-<header class="topnav">
-  <div class="topnav__inner">
-    <a class="topnav__brand" href="/index.php">
-      <span class="topnav__brandTitle">ZNS</span>
-      <span class="topnav__brandSub">Dental Clinic</span>
-    </a>
+<header class="siteHeader">
+  <div class="container nav">
+    <div class="brand">
+      <img src="/assets/img/logo.png" alt="logo" />
+      <div>
+        <div class="brandTitle">ZNS</div>
+        <div class="brandSub">Dental Clinic</div>
+      </div>
+    </div>
 
-    <!-- Mobile menu toggle -->
-    <input id="navToggle" class="topnav__toggle" type="checkbox" />
-    <label for="navToggle" class="topnav__burger" aria-label="Menu">☰</label>
+    <!-- Mobile toggle (CSS-only) -->
+    <input id="siteNavToggle" class="navToggle" type="checkbox">
+    <label for="siteNavToggle" class="navBurger" aria-label="Menu">☰</label>
 
-    <nav class="topnav__links" aria-label="Primary">
-      <a class="topnav__link <?php echo $active==="home" ? "is-active" : ""; ?>" href="/index.php">Home</a>
-      <a class="topnav__link <?php echo $active==="about" ? "is-active" : ""; ?>" href="/about.php">About Us</a>
-      <a class="topnav__link <?php echo $active==="services" ? "is-active" : ""; ?>" href="/services.php">Services</a>
-      <a class="topnav__link <?php echo $active==="testimonials" ? "is-active" : ""; ?>" href="/testimonials.php">Testimonials</a>
-      <a class="topnav__link <?php echo $active==="contact" ? "is-active" : ""; ?>" href="/contact.php">Contact</a>
+    <nav class="siteNav" aria-label="Primary">
+      <ul>
+        <li><a class="<?php echo $active==='home'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#home">Home</a></li>
+        <li><a class="<?php echo $active==='about'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#about">About Us</a></li>
+        <li><a class="<?php echo $active==='services'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#services">Services</a></li>
+        <li><a class="<?php echo $active==='doctors'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#doctors">Doctors</a></li>
+        <li><a class="<?php echo $active==='testimonials'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#testimonials">Testimonials</a></li>
+        <li><a class="<?php echo $active==='contacts'?'is-active':''; ?>" href="<?php echo $homePrefix; ?>#contacts">Contact</a></li>
+      </ul>
     </nav>
 
-    <div class="topnav__actions">
+    <div class="nav-actions">
       <?php if (!empty($_SESSION["user"]["id"])): ?>
-        <a class="topnav__btn topnav__btn--ghost" href="/dashboard.php">Dashboard</a>
-        <a class="topnav__btn topnav__btn--primary" href="/logout.php">Logout</a>
+        <a class="btn light" href="/dashboard.php">Dashboard</a>
+        <a class="btn primary" href="/logout.php">Logout</a>
       <?php else: ?>
-        <a class="topnav__btn topnav__btn--ghost" href="/login.php">Login</a>
-        <a class="topnav__btn topnav__btn--primary" href="/signup.php">Sign up</a>
+        <a class="btn light" href="/login.php">Login</a>
+        <a class="btn primary" href="/signup.php">Sign Up</a>
       <?php endif; ?>
     </div>
   </div>
