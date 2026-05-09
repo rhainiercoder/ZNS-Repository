@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
     }
   }
   // redirect to avoid double-post
-  header("Location: /qm/pages/receptionist/transactions.php?msg=" . urlencode($flash));
+  header("Location: pages/receptionist/transactions.php?msg=" . urlencode($flash));
   exit;
 }
 
@@ -124,11 +124,11 @@ $msg = $_GET['msg'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>Receptionist - Transactions</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <style>.tx-row{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-bottom:1px solid rgba(11,31,42,.06)}</style>
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Transactions</h1></div>
 
@@ -145,7 +145,7 @@ $msg = $_GET['msg'] ?? '';
       <input type="date" name="from" value="<?php echo h($from); ?>" class="authInput">
       <input type="date" name="to" value="<?php echo h($to); ?>" class="authInput">
       <button class="btn btn--dark" type="submit">Filter</button>
-      <a class="btn" href="/qm/pages/receptionist/transactions.php">Reset</a>
+      <a class="btn" href="pages/receptionist/transactions.php">Reset</a>
     </form>
 
     <div class="table" style="margin-top:6px;">
@@ -167,7 +167,7 @@ $msg = $_GET['msg'] ?? '';
           <div><?php echo h($r['type']); ?> / <?php echo h($r['status']); ?></div>
           <div class="table__right">₱<?php echo number_format((float)$r['amount'],2); ?></div>
           <div class="table__right">
-            <a class="btn" href="/qm/pages/receptionist/transaction_view.php?id=<?php echo (int)$r['id']; ?>">View</a>
+            <a class="btn" href="pages/receptionist/transaction_view.php?id=<?php echo (int)$r['id']; ?>">View</a>
             <?php if ($r['type'] === 'payment' && $r['status'] === 'success'): ?>
               <form method="post" style="display:inline-block;margin-left:6px;" onsubmit="return confirm('Issue refund for this transaction?');">
                 <input type="hidden" name="id" value="<?php echo (int)$r['id']; ?>">

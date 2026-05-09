@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../db.php";
 
 $themeBlue = '#2f63e0';
 
@@ -56,7 +56,7 @@ while ($row = $res->fetch_assoc()) {
     'backgroundColor' => $themeBlue,
     'borderColor' => $themeBlue,
     'textColor' => '#ffffff',
-    'url' => "/qm/pages/admin/appointments.php?appointment_id=" . (int)$row['id'],
+    'url' => "pages/admin/appointments.php?appointment_id=" . (int)$row['id'],
   ];
 }
 

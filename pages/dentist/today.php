@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
+require_once __DIR__ . "/../auth.php";
 $user = require_role(["dentist"]);
 $role = $user["role"];
 $active = "today";
 
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $today = date("Y-m-d");
@@ -28,10 +28,10 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
   <meta charset="utf-8" />
   <title>Dentist - Today's Patient</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Today's Patient</h1></div>
@@ -55,7 +55,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
           <div style="text-align:right;">
             <a class="btn btn--dark"
-              href="/qm/pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
+              href="pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
               Add Record
             </a>
           </div>

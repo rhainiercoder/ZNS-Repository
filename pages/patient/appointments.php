@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
+require_once __DIR__ . "/../auth.php";
 $user = require_role(["patient"]);
 $role = $user["role"];
 $active = "appointments";
 
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $errors = [];
@@ -121,10 +121,10 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
   <meta charset="utf-8" />
   <title>Patient - My Appointments</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead">

@@ -1,11 +1,11 @@
 <?php
 // pages/patient/dental-records.php
-require_once __DIR__ . "/../../auth.php";
+require_once __DIR__ . "/../auth.php";
 $user = require_role(["patient"]);
 $role = $user["role"];
 $uid  = (int)$user["id"];
 
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $view = $_GET['view'] ?? '';
@@ -15,17 +15,17 @@ $view = $_GET['view'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>My Dental Records - ZNS Dental Clinic</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">My Dental Records</h1>
     <div style="margin-top:8px;">
-      <a class="btn primary" href="/qm/pages/patient/dental-records.php?view=all">View All My Records</a>
-      <a class="btn light" href="/qm/pages/patient/dental-records.php" style="margin-left:8px">Compact View</a>
+      <a class="btn primary" href="pages/patient/dental-records.php?view=all">View All My Records</a>
+      <a class="btn light" href="pages/patient/dental-records.php" style="margin-left:8px">Compact View</a>
     </div>
   </div>
 
@@ -58,7 +58,7 @@ $view = $_GET['view'] ?? '';
       <?php else: ?>
 
         <div style="margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-          <a class="btn primary" href="/qm/pages/patient/print_dental_record.php?patient_id=<?php echo $uid; ?>" target="_blank">Print All Records</a>
+          <a class="btn primary" href="pages/patient/print_dental_record.php?patient_id=<?php echo $uid; ?>" target="_blank">Print All Records</a>
         </div>
 
         <?php foreach ($records as $r): ?>
@@ -89,7 +89,7 @@ $view = $_GET['view'] ?? '';
                 <div style="font-weight:900;"><?php echo h($r['appointment_date'] . ' ' . $r['appointment_time']); ?></div>
                 <div style="font-size:13px; color:#6f7b86;"><?php echo h(substr($r['created_at'],0,10)); ?></div>
                 <div style="margin-top:8px;">
-                  <a class="btn light" href="/qm/pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['record_id']; ?>" target="_blank">View / Print</a>
+                  <a class="btn light" href="pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['record_id']; ?>" target="_blank">View / Print</a>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ $view = $_GET['view'] ?? '';
               <div style="text-align:right;">
                 <div style="font-weight:900;"><?php echo h(substr($r["created_at"],0,10)); ?></div>
                 <div style="margin-top:6px;">
-                  <a class="btn light" href="/qm/pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
+                  <a class="btn light" href="pages/patient/print_dental_record.php?record_id=<?php echo (int)$r['id']; ?>" target="_blank">View / Print</a>
                 </div>
               </div>
             </div>

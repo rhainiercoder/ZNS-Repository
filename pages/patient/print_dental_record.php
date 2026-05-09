@@ -106,7 +106,7 @@ function parse_tooth_codes(string $rawToothNo): array {
       Dental Record #<?php echo h($rec['id']); ?>
     <?php endif; ?>
   </title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <style>
     @page { margin: 18mm; }
     body { font-family: Arial, Helvetica, sans-serif; color:#111; background:#fff; }
@@ -164,7 +164,7 @@ function parse_tooth_codes(string $rawToothNo): array {
           Record ID: <?php echo h($row['id']); ?>
         </div>
         <div style="text-align:right; font-size:12px;">
-          <img src="/qm/assets/img/logo.png" alt="Logo" style="height:52px;"><br>
+          <img src="assets/img/logo.png" alt="Logo" style="height:52px;"><br>
           Dentist: <?php echo h($row['dentist_name'] ?: '—'); ?>
         </div>
       </div>

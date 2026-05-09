@@ -77,14 +77,14 @@ $msg = $_GET['msg'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>Receptionist - Walk-in Records</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">Walk-in Records</h1>
-    <a class="btn btn--dark" href="/qm/pages/receptionist/walkin_add.php">Add Walk-in Record</a>
+    <a class="btn btn--dark" href="walkin_add.php">Add Walk-in Record</a>
   </div>
 
   <?php if ($msg): ?>
@@ -97,7 +97,7 @@ $msg = $_GET['msg'] ?? '';
       <input type="date" name="from" value="<?php echo h($from); ?>" class="authInput">
       <input type="date" name="to" value="<?php echo h($to); ?>" class="authInput">
       <button class="btn btn--dark" type="submit">Filter</button>
-      <a class="btn" href="/qm/pages/receptionist/walkins.php">Reset</a>
+      <a class="btn" href="pages/receptionist/walkins.php">Reset</a>
     </form>
 
     <div class="table">

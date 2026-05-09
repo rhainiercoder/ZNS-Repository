@@ -36,7 +36,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
   <meta charset="utf-8" />
   <title>Print Schedule (Next 24h)</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <style>
     @page { margin: 14mm; }
     body { background:#fff; color:#111; font-family: Arial, Helvetica, sans-serif; }

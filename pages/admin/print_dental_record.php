@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 $user = require_role(["admin","staff","dentist"]); // allow dentist/staff/admin to view
 $role = $user["role"];
@@ -118,7 +118,7 @@ $app_time = $rec ? substr($rec['appointment_time'] ?? '',0,5) : '';
       Dental Record #<?php echo h($rec['id']); ?>
     <?php endif; ?>
   </title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <style>
     @page { margin: 18mm; }
     body { font-family: Arial, Helvetica, sans-serif; color:#111; background:#fff; }
@@ -151,7 +151,7 @@ $app_time = $rec ? substr($rec['appointment_time'] ?? '',0,5) : '';
   <div class="no-print" style="position:sticky; top:0; background:#fff; padding:12px 18px; z-index:10;">
     <div style="max-width:800px; margin:0 auto; display:flex; gap:8px; justify-content:flex-end;">
       <button class="btn btn--dark" onclick="window.print()">Print</button>
-      <a class="btn" href="/qm/pages/admin/dental-records.php">Back</a>
+      <a class="btn" href="pages/admin/dental-records.php">Back</a>
     </div>
   </div>
 
@@ -175,7 +175,7 @@ $app_time = $rec ? substr($rec['appointment_time'] ?? '',0,5) : '';
           Record ID: <?php echo h($r['id']); ?>
         </div>
         <div style="text-align:right; font-size:12px;">
-          <img src="/qm/assets/img/logo.png" alt="Logo" style="height:52px;"><br>
+          <img src="assets/img/logo.png" alt="Logo" style="height:52px;"><br>
           Dentist: <?php echo h($r['dentist_name'] ?: '—'); ?>
         </div>
       </div>

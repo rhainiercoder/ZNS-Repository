@@ -1,7 +1,7 @@
 <?php
 // pages/dentist/location.php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 // allow dentists too; change if you want admin-only
 $user = require_role(["admin"]);
@@ -31,7 +31,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
 <head>
   <meta charset="utf-8" />
   <title>Location & Map - <?php echo h($clinic_name); ?></title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 
   <!-- Leaflet CSS (no integrity attribute to avoid blocking) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -42,7 +42,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
   </style>
 </head>
 <body>
-<?php require_once __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php require_once __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Location &amp; Map</h1></div>

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 $user = require_role(["dentist"]);
 $role = $user["role"];
 $active = "transactions";
@@ -23,10 +23,10 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <!doctype html>
 <html>
 <head><meta charset="utf-8" /><title>Dentist - Transaction History</title>
-<link rel="stylesheet" href="/qm/assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Transaction History</h1></div>
 

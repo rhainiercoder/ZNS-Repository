@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 $user = require_role(["admin"]);
 $role = $user["role"];
@@ -110,10 +110,10 @@ $pages = (int)ceil($total / $perPage);
 <head>
   <meta charset="utf-8" />
   <title>Admin - Patients</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">Patients</h1>
@@ -165,7 +165,7 @@ $pages = (int)ceil($total / $perPage);
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <?php if ($editing): ?>
           <button class="btn" type="submit" name="action" value="edit">Save</button>
-          <a class="btn" href="/qm/pages/admin/patients.php">Cancel</a>
+          <a class="btn" href="pages/admin/patients.php">Cancel</a>
         <?php else: ?>
           <button class="btn btn--dark" type="submit" name="action" value="add">Create Patient</button>
         <?php endif; ?>

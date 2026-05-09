@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 $user = require_role(["admin"]);
 $role = $user['role']; // ensure sidebar has the role
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
   }
   $flash = "Clinic settings saved.";
-  header("Location: /qm/pages/admin/settings.php?msg=" . urlencode($flash));
+  header("Location: pages/admin/settings.php?msg=" . urlencode($flash));
   exit;
 }
 
@@ -67,7 +67,7 @@ $msg = $_GET['msg'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>Admin - Settings</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -80,7 +80,7 @@ $msg = $_GET['msg'] ?? '';
   </style>
 </head>
 <body>
-<?php require_once __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php require_once __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Settings</h1></div>
 
@@ -124,7 +124,7 @@ $msg = $_GET['msg'] ?? '';
 
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
         <button class="btn btn--dark" type="submit">Save</button>
-        <a class="btn" href="/qm/pages/admin/reports.php">Cancel</a>
+        <a class="btn" href="pages/admin/reports.php">Cancel</a>
       </div>
     </form>
   </section>

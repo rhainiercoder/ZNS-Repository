@@ -253,7 +253,7 @@ try {
 <head>
   <meta charset="utf-8" />
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 </head>
@@ -287,7 +287,7 @@ try {
     </div>
 
     <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
-      <a class="btn btn--dark" href="/qm/pages/admin/appointments.php">Open Appointments</a>
+      <a class="btn btn--dark" href="pages/admin/appointments.php">Open Appointments</a>
     </div>
   </div>
 
@@ -496,7 +496,7 @@ try {
       </div>
 
       <div class="adminTransactions__actions">
-        <a class="btn btn--dark" href="/qm/pages/admin/transactions.php">View All Transactions</a>
+        <a class="btn btn--dark" href="pages/admin/transactions.php">View All Transactions</a>
       </div>
     </section>
   </main>
@@ -517,7 +517,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
   nowIndicator: true,
   navLinks: true,
   timeZone: 'local',
-  events: '/qm/pages/api/calendar_appointments.php',
+  events: 'pages/api/calendar_appointments.php',
 
   displayEventTime: true,
   eventDisplay: 'block',

@@ -44,7 +44,7 @@ foreach ($rows as $r) {
 <head>
   <meta charset="utf-8" />
   <title>Hello Receptionist Dashboard</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -56,10 +56,10 @@ foreach ($rows as $r) {
 
   <section class="card" style="background:#e9f7ff; margin-bottom:14px;">
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <a class="btn btn--dark" href="/qm/pages/receptionist/transactions.php">Manage Transactions</a>
-      <a class="btn btn--dark" href="/qm/pages/receptionist/walkin_add.php">Add Walk-in Record</a>
-      <a class="btn" href="/qm/pages/receptionist/walkins.php">View Walk-in Records</a>
-      <a class="btn" href="/qm/pages/receptionist/print_schedule.php" target="_blank">Print Dentist Schedule (Next 24h)</a>
+      <a class="btn btn--dark" href="pages/receptionist/transactions.php">Manage Transactions</a>
+      <a class="btn btn--dark" href="pages/receptionist/walkin_add.php">Add Walk-in Record</a>
+      <a class="btn" href="pages/receptionist/walkins.php">View Walk-in Records</a>
+      <a class="btn" href="pages/receptionist/print_schedule.php" target="_blank">Print Dentist Schedule (Next 24h)</a>
     </div>
   </section>
 

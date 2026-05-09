@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 $user = require_role(["admin"]);
 $role = $user['role']; // ensure sidebar has the role
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
-  header("Location: /qm/pages/admin/settings_services.php?ok=" . urlencode($ok) . "&err=" . urlencode($err));
+  header("Location: pages/admin/settings_services.php?ok=" . urlencode($ok) . "&err=" . urlencode($err));
   exit;
 }
 
@@ -125,15 +125,15 @@ $err = $_GET["err"] ?? "";
 <head>
   <meta charset="utf-8" />
   <title>Admin - Services Settings</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 
 <main class="main">
   <div class="pageHead" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
     <h1 class="pageHead__title">Services</h1>
-    <a class="btn light" href="/qm/pages/admin/settings.php">Back to Settings</a>
+    <a class="btn light" href="pages/admin/settings.php">Back to Settings</a>
   </div>
 
   <?php if ($ok): ?>

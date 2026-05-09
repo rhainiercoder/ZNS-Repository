@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ");
     $stmt->bind_param("ssiidsi", $patientName, $contact, $serviceParam, $dentistParam, $amount, $notes, $user['id']);
     $stmt->execute();
-    header("Location: /qm/pages/receptionist/walkins.php?msg=" . urlencode("Walk-in record added."));
+    header("Location: pages/receptionist/walkins.php?msg=" . urlencode("Walk-in record added."));
     exit;
   }
 }
@@ -60,14 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8" />
   <title>Add Walk-in Record</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<?php include __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php include __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead">
     <h1 class="pageHead__title">Add Walk-in Record</h1>
-    <a class="btn light" href="/qm/pages/receptionist/walkins.php">View Walk-in Records</a>
+    <a class="btn light" href="pages/receptionist/walkins.php">View Walk-in Records</a>
   </div>
 
   <?php if ($errors): ?>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <textarea class="authInput" name="notes" rows="4"><?php echo h($_POST['notes'] ?? ''); ?></textarea>
 
       <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px;">
-        <a class="btn" href="/qm/pages/receptionist/walkins.php">Cancel</a>
+        <a class="btn" href="pages/receptionist/walkins.php">Cancel</a>
         <button class="btn btn--dark" type="submit">Save Walk-in Record</button>
       </div>
     </form>

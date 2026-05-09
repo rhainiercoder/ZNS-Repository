@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../auth.php";
-require_once __DIR__ . "/../../db.php";
+require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../db.php";
 
 $user = require_role(["dentist"]);
 $role = $user['role'];    // ensure sidebar has the role
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  header("Location: /qm/pages/dentist/settings.php?msg=" . urlencode($flash));
+  header("Location: pages/dentist/settings.php?msg=" . urlencode($flash));
   exit;
 }
 
@@ -118,11 +118,11 @@ $msg = $_GET['msg'] ?? '';
 <head>
   <meta charset="utf-8" />
   <title>Dentist Settings</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <style>.hoursTable{display:grid;gap:6px;}</style>
 </head>
 <body>
-<?php require_once __DIR__ . "/../../partials/sidebar.php"; ?>
+<?php require_once __DIR__ . "/../partials/sidebar.php"; ?>
 <main class="main">
   <div class="pageHead"><h1 class="pageHead__title">Settings</h1></div>
   <?php if ($msg): ?><div class="card callout callout--ok"><?php echo h($msg); ?></div><?php endif; ?>

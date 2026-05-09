@@ -105,7 +105,7 @@ $address = get_setting_local($conn, 'clinic_address', '');
   // Force size recalculation
   setTimeout(function(){ try { map.invalidateSize(); } catch(e){} }, 200);
 
-  var apiUrl = '/qm/pages/api/clinic_location.php';
+  var apiUrl = 'pages/api/clinic_location.php';
   function fetchLocationAndUpdate() {
     fetch(apiUrl, { cache: 'no-store' })
       .then(function(resp){

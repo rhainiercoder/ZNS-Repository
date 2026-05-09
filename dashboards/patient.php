@@ -72,7 +72,7 @@ $fallbackServiceImg = "teeth_icon.png";
 <head>
   <meta charset="utf-8" />
   <title>Patient Dashboard - ZNS Dental Clinic</title>
-  <link rel="stylesheet" href="/qm/assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <?php include __DIR__ . "/../partials/sidebar.php"; ?>
@@ -88,8 +88,8 @@ $fallbackServiceImg = "teeth_icon.png";
         <p>Your smile, Our Priority.</p>
 
         <div class="pHeroActions">
-          <a class="btn btn--dark" href="/qm/pages/patient/appointments.php">Make Appointment</a>
-          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="/qm/pages/patient/dental-records.php">
+          <a class="btn btn--dark" href="pages/patient/appointments.php">Make Appointment</a>
+          <a class="btn" style="background:#e9f7ff; color:#0b2f4f;" href="pages/patient/dental-records.php">
             View Dental Record
           </a>
         </div>
@@ -102,7 +102,7 @@ $fallbackServiceImg = "teeth_icon.png";
         <div class="pLogoShape" aria-label="ZNS logo">
           <img
             class="pLogoImg"
-            src="/qm/assets/img/logo.png"
+            src="assets/img/logo.png"
             alt="ZNS logo"
             style="width:100%; height:100%; object-fit:contain; display:block;"
           />
@@ -129,12 +129,12 @@ $fallbackServiceImg = "teeth_icon.png";
         ?>
           <a
             class="pService <?php echo $activeCard ? "pService--active" : ""; ?>"
-            href="/qm/pages/patient/dental-records.php?service_id=<?php echo $sid; ?>"
+            href="pages/patient/dental-records.php?service_id=<?php echo $sid; ?>"
             style="text-decoration:none;"
           >
             <div class="pServiceIcon">
               <img
-                src="/qm/assets/img/services/<?php echo h($imgFile); ?>"
+                src="assets/img/services/<?php echo h($imgFile); ?>"
                 alt=""
                 width="22"
                 height="22"
@@ -149,7 +149,7 @@ $fallbackServiceImg = "teeth_icon.png";
           <div class="pService">
             <div class="pServiceIcon">
               <img
-                src="/qm/assets/img/services/<?php echo h($fallbackServiceImg); ?>"
+                src="assets/img/services/<?php echo h($fallbackServiceImg); ?>"
                 alt=""
                 width="22"
                 height="22"
@@ -182,14 +182,14 @@ $fallbackServiceImg = "teeth_icon.png";
           </div>
 
           <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-            <a class="btn btn--dark" href="/qm/pages/patient/appointments.php">View</a>
+            <a class="btn btn--dark" href="pages/patient/appointments.php">View</a>
           </div>
         <?php else: ?>
           <div style="margin-top:12px; font-weight:900; opacity:.75;">
             No upcoming approved appointment yet.
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-            <a class="btn btn--dark" href="/qm/pages/patient/appointments.php">Make Appointment</a>
+            <a class="btn btn--dark" href="pages/patient/appointments.php">Make Appointment</a>
           </div>
         <?php endif; ?>
       </div>
@@ -217,7 +217,7 @@ $fallbackServiceImg = "teeth_icon.png";
         </div>
 
         <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-          <a class="btn btn--dark btn--xs" href="/qm/pages/patient/dental-records.php">View All</a>
+          <a class="btn btn--dark btn--xs" href="pages/patient/dental-records.php">View All</a>
         </div>
       </div>
 
