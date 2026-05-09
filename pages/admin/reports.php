@@ -87,7 +87,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
       <input type="date" name="from" value="<?php echo h($from); ?>" class="authInput">
       <input type="date" name="to" value="<?php echo h($to); ?>" class="authInput">
       <button class="btn btn--dark" type="submit">Filter</button>
-      <a class="btn" href="pages/admin/reports.php">Reset</a>
+      <a class="btn" href="/pages/admin/reports.php">Reset</a>
     </form>
 
     <div style="margin-top:12px;">

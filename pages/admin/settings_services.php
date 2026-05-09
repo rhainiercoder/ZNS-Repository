@@ -4,7 +4,7 @@ require_once __DIR__ . "/../../db.php";
 
 $user = require_role(["admin"]);
 $role = $user['role']; // ensure sidebar has the role
-$active = "settings";
+$active = "services";
 
 function h($v){ return htmlspecialchars((string)$v); }
 

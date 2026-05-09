@@ -29,7 +29,7 @@ function active_class(string $key, string $active): string {
       <a class="sidebar__link<?php echo active_class("transactions", $active); ?>" href="/pages/admin/transactions.php">Transactions</a>
       <a class="sidebar__link<?php echo active_class("reports", $active); ?>" href="/pages/admin/reports.php">Reports</a>
       <a class="sidebar__link<?php echo active_class("location", $active); ?>" href="/pages/admin/location.php">Location &amp; Map</a>
-       <a class="sidebar__link<?php echo active_class("settings", $active); ?>" href="/pages/admin/settings_services.php">Services</a>
+       <a class="sidebar__link<?php echo active_class("services", $active); ?>" href="/pages/admin/settings_services.php">Services</a>
       <a class="sidebar__link<?php echo active_class("settings", $active); ?>" href="/pages/admin/settings.php">Settings</a>
 
     <?php elseif ($role === "dentist"): ?>

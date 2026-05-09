@@ -184,10 +184,14 @@
 
   <div class="testi-grid">
     <div class="testi-card">
-      <p>The best dental clinic in Valenzuela City with a very accommodating staffs. Dra. Glenn is a proficient and informative dentist that can treat your dental problems gently and without anything to worry about. Highly recommended!!!</p>
+      <p>The best dental clinic in Valenzuela City with a very accommodating staffs. Dra. Glenn is a proficient and informative dentist that can treat your dental problems gently and without anything to worry about. Highly recommended!!!
+        - Mateo Lawrence
+      </p>
     </div>
     <div class="testi-card">
-      <p>Clinic is well-sanitized and disinfected all throughout. Doc Paula is the best dentist I’ve gone to. She has very gentle but sturdy hands during procedures, and is very caring and informative too. Highly recommended!</p>
+      <p>Clinic is well-sanitized and disinfected all throughout. Doc Paula is the best dentist I’ve gone to. She has very gentle but sturdy hands during procedures, and is very caring and informative too. Highly recommended!
+        - Sioco Camille Ronquillo
+      </p>
     </div>
   </div>
 </section>
