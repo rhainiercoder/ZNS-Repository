@@ -42,6 +42,9 @@ function topnav_active(string $key, string $active): string {
       </div>
     </a>
 
+    <input id="navToggle" class="topnav__toggle" type="checkbox" />
+    <label for="navToggle" class="topnav__burger" aria-label="Menu">☰</label>
+
     <nav class="topnav__links">
       <a class="topnav__link<?php echo topnav_active('home', $active); ?>"
          href="/index.php#home">Home</a>

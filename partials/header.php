@@ -2,8 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-$active = $active ?? ""; // e.g. "home", "about", "services", "testimonials", "contact"
+$active = $active ?? "";
 ?>
 <header class="topnav">
   <div class="topnav__inner">
@@ -11,6 +10,9 @@ $active = $active ?? ""; // e.g. "home", "about", "services", "testimonials", "c
       <span class="topnav__brandTitle">ZNS</span>
       <span class="topnav__brandSub">Dental Clinic</span>
     </a>
+
+    <input id="navToggle" class="topnav__toggle" type="checkbox" />
+    <label for="navToggle" class="topnav__burger" aria-label="Menu">☰</label>
 
     <nav class="topnav__links">
       <a class="topnav__link <?php echo $active==="home" ? "is-active":""; ?>" href="/index.php">Home</a>
@@ -21,7 +23,7 @@ $active = $active ?? ""; // e.g. "home", "about", "services", "testimonials", "c
     </nav>
 
     <div class="topnav__actions">
-      <?php if (!empty($_SESSION["user_id"])): ?>
+      <?php if (!empty($_SESSION["user"]["id"])): ?>
         <a class="topnav__btn topnav__btn--ghost" href="/dashboard.php">Dashboard</a>
         <a class="topnav__btn topnav__btn--primary" href="/logout.php">Logout</a>
       <?php else: ?>

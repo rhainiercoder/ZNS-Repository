@@ -13,7 +13,7 @@ function active_class(string $key, string $active): string {
 <button class="sidebarToggle" type="button" onclick="document.body.classList.toggle('sidebar-open')">
   ☰
   </button>
-  
+
 <aside class="sidebar">
   <div class="sidebar__brand">
     <div class="sidebar__logo"><img src="/assets/img/logo.png" alt="ZNS" class="sidebarLogo" height=200 width=200></div>
@@ -63,3 +63,12 @@ function active_class(string $key, string $active): string {
     <a class="sidebar__logout" href="/logout.php">Log out</a>
   </div>
 </aside>
+<script>
+document.addEventListener('click', (e) => {
+  if (!document.body.classList.contains('sidebar-open')) return;
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.querySelector('.sidebarToggle');
+  if (sidebar.contains(e.target) || toggle.contains(e.target)) return;
+  document.body.classList.remove('sidebar-open');
+});
+</script>
