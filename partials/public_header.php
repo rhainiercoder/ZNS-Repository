@@ -29,6 +29,7 @@ function topnav_active(string $key, string $active): string {
 }
 ?>
 <header class="topnav">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <div class="topnav__inner">
     <a class="topnav__brand" href="/index.php">
       <img

@@ -30,6 +30,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Location & Map - <?php echo h($clinic_name); ?></title>
   <link rel="stylesheet" href="/assets/css/style.css">
 

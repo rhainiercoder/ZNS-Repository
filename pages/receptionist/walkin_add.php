@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Walk-in Record</title>
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>

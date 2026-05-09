@@ -109,6 +109,7 @@ $pages = (int)ceil($total / $perPage);
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Patients</title>
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>

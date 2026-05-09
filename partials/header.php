@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $active = $active ?? ""; // e.g. "home", "about", "services", "testimonials", "contact"
 ?>
 <header class="topnav">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <div class="topnav__inner">
     <a class="topnav__brand" href="index.php">
       <span class="topnav__brandTitle">ZNS</span>

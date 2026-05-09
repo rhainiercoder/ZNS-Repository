@@ -119,6 +119,7 @@ $app_time = $rec ? substr($rec['appointment_time'] ?? '',0,5) : '';
     <?php endif; ?>
   </title>
   <link rel="stylesheet" href="/assets/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     @page { margin: 18mm; }
     body { font-family: Arial, Helvetica, sans-serif; color:#111; background:#fff; }

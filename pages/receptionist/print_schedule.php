@@ -35,6 +35,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Print Schedule (Next 24h)</title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <style>

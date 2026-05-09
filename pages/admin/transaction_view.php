@@ -27,6 +27,7 @@ if (!$tx) { http_response_code(404); die("Not found"); }
 <!doctype html>
 <html>
 <head><meta charset="utf-8" /><title>Transaction #<?php echo h($tx['id']); ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
