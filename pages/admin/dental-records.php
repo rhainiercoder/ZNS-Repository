@@ -1,10 +1,10 @@
 <?php
 // pages/admin/dental-records.php
-require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . '/../../auth.php';
 $user = require_role(["admin", "staff", "dentist"]);
 $role = $user["role"];
 
-require_once __DIR__ . "/../db.php";
+require_once __DIR__ . '/../../db.php';
 
 function h($v){ return htmlspecialchars((string)$v); }
 

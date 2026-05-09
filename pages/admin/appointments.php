@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../../auth.php";
 $user = require_role(["admin"]);
 $role = $user["role"];
 $active = "appointments";
 
-require_once __DIR__ . "/../db.php";
+require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $patient_id = (int)($_GET['patient_id'] ?? 0);

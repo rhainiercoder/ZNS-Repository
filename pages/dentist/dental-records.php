@@ -4,7 +4,7 @@ $user = require_role(["dentist"]);
 $role = $user["role"];
 $active = "records";
 
-require_once __DIR__ . "/../db.php";
+require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $errors = [];

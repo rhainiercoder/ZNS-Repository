@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/auth.php";
-require_once __DIR__ . "/db.php";
+require_once __DIR__ . '/../../auth.php';
+require_once __DIR__ . '/../../db.php';
 
 $user = require_role(["admin"]);
 $role = $user["role"];

@@ -1,11 +1,11 @@
 <?php
 // pages/patient/dental-records.php
-require_once __DIR__ . "/../auth.php";
+require_once __DIR__ . "/../../auth.php";
 $user = require_role(["patient"]);
 $role = $user["role"];
 $uid  = (int)$user["id"];
 
-require_once __DIR__ . "/../db.php";
+require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
 
 $view = $_GET['view'] ?? '';

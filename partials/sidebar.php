@@ -12,7 +12,7 @@ function active_class(string $key, string $active): string {
 ?>
 <aside class="sidebar">
   <div class="sidebar__brand">
-    <div class="sidebar__logo"><img src="assets/img/logo.png" alt="ZNS" class="sidebarLogo" height=200 width=200></div>
+    <div class="sidebar__logo"><img src="/assets/img/logo.png" alt="ZNS" class="sidebarLogo" height=200 width=200></div>
   </div>
 
   <nav class="sidebar__nav">
