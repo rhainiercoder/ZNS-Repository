@@ -63,12 +63,12 @@ function topnav_active(string $key, string $active): string {
         <a class="topnav__btn topnav__btn--ghost"
            href="<?php echo htmlspecialchars($dashUrl); ?>">Dashboard</a>
         <a class="topnav__btn topnav__btn--primary"
-           href="/pages/auth/logout.php">Logout</a>
+           href="/logout.php">Logout</a>
       <?php else: ?>
         <a class="topnav__btn topnav__btn--ghost"
-           href="/pages/auth/login.php">Login</a>
+           href="/login.php">Login</a>
         <a class="topnav__btn topnav__btn--primary"
-           href="/pages/auth/signup.php">Sign Up</a>
+           href="/signup.php">Sign Up</a>
       <?php endif; ?>
     </div>
   </div>

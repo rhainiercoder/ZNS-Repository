@@ -3077,3 +3077,367 @@ body.landing .landingContactsCard{
     text-align:center;
   }
 }
+
+/* ==========================================================
+   Final navigation polish: public topbar + mobile drawers
+========================================================== */
+.siteHeader,
+.topnav{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  width:100%;
+  background:rgba(255,255,255,.88);
+  border-bottom:1px solid rgba(16,36,47,.10);
+  box-shadow:0 10px 30px rgba(9,51,77,.06);
+  backdrop-filter:blur(16px);
+}
+
+.siteHeader .container.nav,
+.topnav__inner{
+  width:min(1180px, 100%);
+  max-width:1180px;
+  min-height:90px;
+  margin:0 auto;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+}
+
+.brand,
+.topnav__brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:max-content;
+  color:var(--ink);
+  text-decoration:none;
+}
+
+.brand img,
+.topnav__brandImg{
+  width:58px;
+  height:58px;
+  max-width:58px;
+  max-height:58px;
+  object-fit:contain;
+  border-radius:16px;
+  padding:6px;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(9,51,77,.10);
+}
+
+.brandTitle,
+.topnav__brandTitle{
+  display:block;
+  font-size:20px;
+  font-weight:900;
+  line-height:1.05;
+  color:var(--ink);
+}
+
+.brandSub,
+.topnav__brandSub{
+  display:block;
+  margin-top:3px;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.1;
+  color:var(--muted);
+}
+
+.siteNav,
+.topnav__links{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.siteNav ul,
+.topnav__links{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  margin:0;
+  padding:0;
+}
+
+.siteNav a,
+.topnav__link{
+  color:var(--ink);
+  text-decoration:none;
+  font-size:17px;
+  font-weight:900;
+  line-height:1;
+}
+
+.siteNav a:hover,
+.siteNav a.is-active,
+.topnav__link:hover,
+.topnav__link.is-active{
+  color:#078896;
+}
+
+.nav-actions,
+.topnav__actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.navToggle,
+.topnav__toggle{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.navBurger,
+.topnav__burger,
+.sidebarToggle{
+  font-size:0;
+  border:1px solid rgba(8,166,179,.22);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 12px 26px rgba(9,51,77,.10);
+  cursor:pointer;
+}
+
+.navBurger,
+.topnav__burger{
+  display:none;
+  width:50px;
+  height:50px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+  margin-left:auto;
+}
+
+.navBurger::before,
+.navBurger::after,
+.topnav__burger::before,
+.topnav__burger::after,
+.sidebarToggle::before,
+.sidebarToggle::after{
+  content:"";
+}
+
+.navBurger::before,
+.navBurger::after,
+.navBurger span,
+.topnav__burger::before,
+.topnav__burger::after,
+.topnav__burger span,
+.sidebarToggle::before,
+.sidebarToggle::after,
+.sidebarToggle span{
+  display:block;
+  width:22px;
+  height:2px;
+  border-radius:999px;
+  background:#078896;
+}
+
+.sidebarToggle{
+  display:none;
+  width:52px;
+  height:52px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+}
+
+@media (max-width: 860px){
+  .siteHeader .container.nav,
+  .topnav__inner{
+    min-height:76px;
+    flex-wrap:wrap;
+    padding:10px 18px;
+  }
+
+  .brand img,
+  .topnav__brandImg{
+    width:48px;
+    height:48px;
+  }
+
+  .brandTitle,
+  .topnav__brandTitle{
+    font-size:18px;
+  }
+
+  .brandSub,
+  .topnav__brandSub{
+    font-size:13px;
+  }
+
+  .navBurger,
+  .topnav__burger{
+    display:flex !important;
+    order:2;
+  }
+
+  .siteNav,
+  .topnav__links,
+  .nav-actions,
+  .topnav__actions{
+    display:none !important;
+    width:100%;
+    flex:0 0 100%;
+  }
+
+  .navToggle:checked ~ .siteNav,
+  .navToggle:checked ~ .nav-actions,
+  .topnav__toggle:checked ~ .topnav__links,
+  .topnav__toggle:checked ~ .topnav__actions{
+    display:flex !important;
+  }
+
+  .siteNav,
+  .topnav__links{
+    order:3;
+    justify-content:flex-start;
+    padding-top:10px;
+  }
+
+  .siteNav ul,
+  .topnav__links{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+
+  .siteNav a,
+  .topnav__link{
+    display:block;
+    padding:13px 14px;
+    border-radius:12px;
+    background:#f2fbfc;
+  }
+
+  .nav-actions,
+  .topnav__actions{
+    order:4;
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+    padding:10px 0 4px;
+  }
+
+  .nav-actions .btn,
+  .topnav__btn{
+    width:100%;
+    min-height:48px;
+  }
+}
+
+@media (max-width: 768px){
+  .main,
+  .app__main{
+    margin-left:0;
+    padding-top:80px;
+  }
+
+  .sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    max-width:82vw;
+    height:100vh;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+    z-index:1100;
+  }
+
+  body.sidebar-open .sidebar{
+    transform:translateX(0);
+  }
+
+  body.sidebar-open::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:rgba(7,50,77,.38);
+    z-index:1090;
+  }
+
+  .sidebarToggle{
+    position:fixed;
+    top:14px;
+    left:14px;
+    z-index:1110;
+    display:flex;
+  }
+
+  body.sidebar-open .sidebarToggle{
+    background:#eafafa;
+  }
+}
+
+.navBurger::before,
+.topnav__burger::before,
+.sidebarToggle::before{
+  width:22px;
+  height:2px;
+  background:#078896;
+  box-shadow:0 -7px 0 #078896, 0 7px 0 #078896;
+}
+
+.navBurger::after,
+.topnav__burger::after,
+.sidebarToggle::after{
+  display:none;
+}
+
+/* Make index topbar match login/signup topbar */
+body.landingPage .siteHeader{
+  width:min(1120px, calc(100% - 48px));
+  margin:18px auto 0;
+  background:rgba(255,255,255,.86);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 18px 44px rgba(9,51,77,.10);
+  overflow:visible;
+}
+
+body.landingPage .siteHeader .container.nav{
+  width:100%;
+  min-height:64px;
+  padding:12px 16px;
+}
+
+body.landingPage .siteHeader .brand img{
+  width:46px;
+  height:46px;
+  max-width:46px;
+  max-height:46px;
+  border-radius:12px;
+}
+
+body.landingPage .siteHeader .brandTitle{
+  font-size:18px;
+}
+
+body.landingPage .siteHeader .brandSub{
+  font-size:13px;
+}
+
+@media (max-width: 860px){
+  body.landingPage .siteHeader{
+    width:calc(100% - 24px);
+    margin:12px auto 0;
+  }
+
+  body.landingPage .siteHeader .container.nav{
+    min-height:60px;
+  }
+}
