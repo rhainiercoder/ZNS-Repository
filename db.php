@@ -2,7 +2,7 @@
 $host = getenv("DB_HOST") ?: "127.0.0.1";
 $user = getenv("DB_USER") ?: "root";
 $pass = getenv("DB_PASS") ?: "";
-$name = getenv("DB_NAME") ?: "happy_teeth_db";
+$name = getenv("DB_NAME") ?: "railway";
 $port = (int)(getenv("DB_PORT") ?: 3306);
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
