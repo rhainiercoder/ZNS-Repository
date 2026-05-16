@@ -150,12 +150,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
 
         <div class="authField">
-          <span class="authField__icon">🔒</span>
+          <span class="authField__icon">#</span>
           <input name="contact" placeholder="Contact number" value="<?php echo htmlspecialchars($_POST["contact"] ?? ""); ?>">
         </div>
 
         <div class="authField">
-          <span class="authField__icon">*</span>
+          <span class="authField__icon">🔒</span>
           <input class="hasPasswordToggle" name="password" type="password" placeholder="Password" required>
           <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
         </div>
