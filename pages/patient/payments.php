@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
       JOIN services s ON s.id = a.service_id
       WHERE a.id = ?
         AND a.patient_id = ?
+        AND a.status IN ('pending','approved')
       LIMIT 1
     ");
     $stmt->bind_param("ii", $appointment_id, $user['id']);
@@ -68,12 +69,13 @@ $stmt->bind_param("i", $user['id']);
 $stmt->execute();
 $transactions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-/* Load upcoming pending appointments for this patient (to pay) */
+/* Load upcoming appointments for this patient (to pay) */
 $stmt2 = $conn->prepare("
   SELECT
     a.id,
     a.appointment_date,
     a.appointment_time,
+    a.status,
     s.name AS service,
     COALESCE(NULLIF(s.price, 0), 1200.00) AS amount,
     MAX(CASE WHEN t.id IS NOT NULL THEN 1 ELSE 0 END) AS is_paid
@@ -85,8 +87,8 @@ $stmt2 = $conn->prepare("
    AND t.type = 'payment'
    AND t.status = 'success'
   WHERE a.patient_id = ?
-    AND a.status IN ('pending')
-  GROUP BY a.id, a.appointment_date, a.appointment_time, s.name, s.price
+    AND a.status IN ('pending','approved')
+  GROUP BY a.id, a.appointment_date, a.appointment_time, a.status, s.name, s.price
   ORDER BY a.appointment_date ASC
   LIMIT 10
 ");
@@ -142,14 +144,15 @@ $err = $_GET['err'] ?? $err;
     <h2 class="sectionTitle">Upcoming appointments (pay now)</h2>
     <?php if ($upcoming): ?>
       <div class="table">
-        <div class="table__row table__row--head" style="grid-template-columns: 1.2fr .6fr .6fr .6fr;">
-          <div>Service</div><div>Date</div><div>Time</div><div style="text-align:right;">Action</div>
+        <div class="table__row table__row--head" style="grid-template-columns: 1.2fr .6fr .5fr .6fr .7fr;">
+          <div>Service</div><div>Date</div><div>Time</div><div>Status</div><div style="text-align:right;">Action</div>
         </div>
         <?php foreach ($upcoming as $a): ?>
-          <div class="table__row" style="grid-template-columns: 1.2fr .6fr .6fr .6fr;">
+          <div class="table__row" style="grid-template-columns: 1.2fr .6fr .5fr .6fr .7fr;">
             <div style="font-weight:900; color:#0b2f4f;"><?php echo h($a['service']); ?></div>
             <div class="table__muted"><?php echo h($a['appointment_date']); ?></div>
             <div class="table__muted"><?php echo h(substr($a['appointment_time'],0,5)); ?></div>
+            <div style="font-weight:900;"><?php echo h($a['status']); ?></div>
             <div style="text-align:right;">
               <?php if ((int)$a['is_paid'] === 1): ?>
                 <span class="pill pill--green">Payment successful</span>
@@ -157,9 +160,8 @@ $err = $_GET['err'] ?? $err;
               <form method="post" style="display:inline-block;">
                 <input type="hidden" name="action" value="pay">
                 <input type="hidden" name="appointment_id" value="<?php echo (int)$a['id']; ?>">
-                <!-- In a real app, amount should come from services/pricing. We'll use a sample 1200.00 -->
-                <input type="hidden" name="amount" value="1200.00">
-                <button class="btn btn--dark" type="submit">Pay ₱1,200.00</button>
+                <input type="hidden" name="amount" value="<?php echo h($a['amount']); ?>">
+                <button class="btn btn--dark" type="submit">Pay ₱<?php echo number_format((float)$a['amount'], 2); ?></button>
               </form>
               <?php endif; ?>
             </div>
@@ -167,7 +169,7 @@ $err = $_GET['err'] ?? $err;
         <?php endforeach; ?>
       </div>
     <?php else: ?>
-      <div class="small-muted">No upcoming pending appointments to pay.</div>
+      <div class="small-muted">No upcoming appointments to pay.</div>
     <?php endif; ?>
   </section>
 </main>

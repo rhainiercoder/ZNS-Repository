@@ -73,6 +73,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "save_
   }
 
   if (!$errors) {
+    $stmt = $conn->prepare("
+      SELECT id
+      FROM transactions
+      WHERE appointment_id = ?
+        AND user_id = ?
+        AND type = 'payment'
+        AND status = 'success'
+      LIMIT 1
+    ");
+    $stmt->bind_param("ii", $appointment_id, $check["patient_id"]);
+    $stmt->execute();
+    $paid = $stmt->get_result()->fetch_assoc();
+
+    if (!$paid) {
+      $errors[] = "This appointment cannot be completed until the patient has paid.";
+    }
+  }
+
+  if (!$errors) {
     $diagnosis = trim($_POST["diagnosis"] ?? "");
     $treatment = trim($_POST["treatment"] ?? "");
     $prescription = trim($_POST["prescription"] ?? "");

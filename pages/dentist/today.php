@@ -11,13 +11,24 @@ function h($v){ return htmlspecialchars((string)$v); }
 $today = date("Y-m-d");
 
 $stmt = $conn->prepare("
-  SELECT a.id, a.appointment_time, s.name AS service, u.name AS patient_name
+  SELECT
+    a.id,
+    a.appointment_time,
+    s.name AS service,
+    u.name AS patient_name,
+    MAX(CASE WHEN t.id IS NOT NULL THEN 1 ELSE 0 END) AS is_paid
   FROM appointments a
   JOIN users u ON u.id = a.patient_id
   JOIN services s ON s.id = a.service_id
+  LEFT JOIN transactions t
+    ON t.appointment_id = a.id
+   AND t.user_id = a.patient_id
+   AND t.type = 'payment'
+   AND t.status = 'success'
   WHERE a.status = 'approved'
     AND a.appointment_date = ?
     AND a.dentist_id = ?
+  GROUP BY a.id, a.appointment_time, s.name, u.name
   ORDER BY a.appointment_time ASC
 ");
 $stmt->bind_param("si", $today, $user["id"]);
@@ -42,24 +53,32 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <h2 class="sectionTitle">Approved for <?php echo h($today); ?></h2>
 
     <div class="table">
-      <div class="table__row table__row--head" style="grid-template-columns: 1fr .6fr 1fr .7fr;">
+      <div class="table__row table__row--head" style="grid-template-columns: 1fr .6fr 1fr .7fr .7fr;">
         <div>Patient</div>
         <div>Time</div>
         <div style="text-align:right;">Service</div>
+        <div style="text-align:right;">Payment</div>
         <div style="text-align:right;">Action</div>
     </div>
 
       <?php foreach ($rows as $r): ?>
-        <div class="table__row" style="grid-template-columns: 1fr .6fr 1fr .7fr;">
+        <div class="table__row" style="grid-template-columns: 1fr .6fr 1fr .7fr .7fr;">
           <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r["patient_name"]); ?></div>
           <div class="table__muted"><?php echo h(substr($r["appointment_time"], 0, 5)); ?></div>
           <div class="table__right"><?php echo h($r["service"]); ?></div>
+          <div class="table__right" style="font-weight:900; color:<?php echo ((int)$r["is_paid"] === 1) ? '#15803d' : '#b42318'; ?>;">
+            <?php echo ((int)$r["is_paid"] === 1) ? 'Paid' : 'Unpaid'; ?>
+          </div>
 
           <div style="text-align:right;">
-            <a class="btn btn--dark"
-              href="/pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
-              Add Record
-            </a>
+            <?php if ((int)$r["is_paid"] === 1): ?>
+              <a class="btn btn--dark"
+                href="/pages/dentist/dental-records.php?appointment_id=<?php echo (int)$r["id"]; ?>">
+                Add Record
+              </a>
+            <?php else: ?>
+              <span class="btn" style="background:#f3f4f6;color:#667085;cursor:not-allowed;">Awaiting Payment</span>
+            <?php endif; ?>
           </div>
         </div>
       <?php endforeach; ?>

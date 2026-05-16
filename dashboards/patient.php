@@ -27,13 +27,21 @@ $stmt = $conn->prepare("
     a.appointment_time,
     a.status,
     s.name AS service,
+    COALESCE(NULLIF(s.price, 0), 1200.00) AS amount,
+    MAX(CASE WHEN t.id IS NOT NULL THEN 1 ELSE 0 END) AS is_paid,
     d.name AS dentist_name
   FROM appointments a
   JOIN services s ON s.id = a.service_id
   LEFT JOIN users d ON d.id = a.dentist_id
+  LEFT JOIN transactions t
+    ON t.appointment_id = a.id
+   AND t.user_id = a.patient_id
+   AND t.type = 'payment'
+   AND t.status = 'success'
   WHERE a.patient_id = ?
     AND a.status = 'approved'
     AND a.appointment_date >= ?
+  GROUP BY a.id, a.appointment_date, a.appointment_time, a.status, s.name, s.price, d.name
   ORDER BY a.appointment_date ASC, a.appointment_time ASC
   LIMIT 1
 ");
@@ -182,9 +190,18 @@ $fallbackServiceImg = "teeth_icon.png";
             <div>📅 <?php echo h($upcoming["appointment_date"]); ?> — <?php echo h(substr($upcoming["appointment_time"],0,5)); ?></div>
             <div>🦷 <?php echo h($upcoming["service"]); ?></div>
             <div>👨‍⚕️ <?php echo h($upcoming["dentist_name"] ?: "Assigned dentist"); ?></div>
+            <?php if ((int)$upcoming["is_paid"] === 1): ?>
+              <div style="color:#15803d;">Payment status: Paid</div>
+            <?php else: ?>
+              <div style="color:#b42318;">Payment required before your appointment can be completed.</div>
+              <div>Amount due: â‚±<?php echo number_format((float)$upcoming["amount"], 2); ?></div>
+            <?php endif; ?>
           </div>
 
-          <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+          <div style="display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; margin-top:12px;">
+            <?php if ((int)$upcoming["is_paid"] !== 1): ?>
+              <a class="btn" style="background:#e64545;color:#fff;" href="/pages/patient/payments.php">Pay Now</a>
+            <?php endif; ?>
             <a class="btn btn--dark" href="/pages/patient/appointments.php">View</a>
           </div>
         <?php else: ?>
@@ -230,8 +247,13 @@ $fallbackServiceImg = "teeth_icon.png";
         <div class="pMiniItem">
           <div class="pServiceIcon" style="width:42px;height:42px;border-radius:14px;">🔔</div>
           <div>
-            <b>1 New Reminder</b>
-            <small>Your next appointment will appear here after approval.</small>
+            <?php if ($upcoming && (int)$upcoming["is_paid"] !== 1): ?>
+              <b>Payment Needed</b>
+              <small>Please pay your approved appointment so it can be completed after treatment.</small>
+            <?php else: ?>
+              <b>1 New Reminder</b>
+              <small>Your next appointment will appear here after approval.</small>
+            <?php endif; ?>
           </div>
         </div>
       </div>
