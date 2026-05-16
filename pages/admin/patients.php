@@ -160,7 +160,10 @@ $pages = (int)ceil($total / $perPage);
       </label>
       <label>
         <div class="authLabel">Password <?php if ($editing) echo "<small>(leave blank to keep)</small>"; ?></div>
-        <input name="password" type="password" class="authInput" <?php if (!$editing) echo "required"; ?>>
+        <span class="passwordField">
+          <input name="password" type="password" class="authInput" <?php if (!$editing) echo "required"; ?>>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
+        </span>
       </label>
 
       <div style="display:flex; gap:8px; justify-content:flex-end;">
@@ -219,5 +222,16 @@ $pages = (int)ceil($total / $perPage);
 
   </section>
 </main>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+});
+</script>
 </body>
 </html>

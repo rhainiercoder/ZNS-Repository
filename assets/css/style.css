@@ -778,6 +778,41 @@ body{
   box-shadow: 0 0 0 4px rgba(26,169,227,.14);
 }
 
+.passwordField{
+  position:relative;
+  display:block;
+}
+
+.passwordField .authInput,
+.authField input.hasPasswordToggle{
+  padding-right:48px;
+}
+
+.passwordToggle{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#0b2f4f;
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+  cursor:pointer;
+}
+
+.authField .passwordToggle{
+  right:12px;
+}
+
+.passwordToggle:hover{
+  background:rgba(11,47,79,.08);
+}
+
 .authActions{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:6px; }
 
 .authLink{

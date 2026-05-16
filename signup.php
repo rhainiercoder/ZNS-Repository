@@ -5,6 +5,24 @@ require __DIR__ . "/db.php";
 $error = "";
 $success = "";
 
+function table_has_column(mysqli $conn, string $table, string $column): bool {
+    $stmt = $conn->prepare("
+      SELECT COUNT(*) AS c
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        AND COLUMN_NAME = ?
+      LIMIT 1
+    ");
+    if ($stmt === false) return false;
+    $stmt->bind_param("ss", $table, $column);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    return (int)($row["c"] ?? 0) > 0;
+}
+
+$contactColumn = table_has_column($conn, "users", "phone") ? "phone" : (table_has_column($conn, "users", "contact") ? "contact" : "");
+
 // If already logged in, redirect
 if (!empty($_SESSION["user"]["role"])) {
     $role = $_SESSION["user"]["role"];
@@ -21,6 +39,7 @@ if (!empty($_SESSION["user"]["role"])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["name"] ?? "");
     $email = trim($_POST["email"] ?? "");
+    $contact = trim($_POST["contact"] ?? "");
     $password = $_POST["password"] ?? "";
 
     $role = "patient";
@@ -38,8 +57,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
 
-            $stmt = $conn->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $name, $email, $hash, $role);
+            if ($contactColumn !== "") {
+                $stmt = $conn->prepare("INSERT INTO users (name, email, {$contactColumn}, password_hash, role) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $name, $email, $contact, $hash, $role);
+            } else {
+                $stmt = $conn->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $name, $email, $hash, $role);
+            }
             $stmt->execute();
 
             $success = "Account created! You can now log in.";
@@ -127,7 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="authField">
           <span class="authField__icon">🔒</span>
-          <input name="password" type="password" placeholder="Password" required>
+          <input name="contact" placeholder="Contact number" value="<?php echo htmlspecialchars($_POST["contact"] ?? ""); ?>">
+        </div>
+
+        <div class="authField">
+          <span class="authField__icon">*</span>
+          <input class="hasPasswordToggle" name="password" type="password" placeholder="Password" required>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
         </div>
 
         <button class="authSubmit" type="submit">Sign up</button>
@@ -138,6 +168,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </form>
     </section>
   </div>
+
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+});
+</script>
 
 </body>
 </html>

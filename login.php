@@ -114,7 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="authField">
           <span class="authField__icon">🔒</span>
-          <input name="password" type="password" placeholder="Password" required>
+          <input class="hasPasswordToggle" name="password" type="password" placeholder="Password" required>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
         </div>
 
         <div class="authRow">
@@ -129,6 +130,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </form>
     </section>
   </div>
+
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+});
+</script>
 
 </body>
 </html>

@@ -37,9 +37,19 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
   <!-- Leaflet CSS (no integrity attribute to avoid blocking) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    #clinicMap { height:420px; border:1px solid #ddd; border-radius:6px; }
+    #clinicMap { height:420px; border:1px solid #ddd; border-radius:6px; margin-top:14px; }
     .locCard { max-width:920px; margin-top:12px; }
-    .mapControls { display:flex; gap:8px; align-items:center; margin-top:8px; }
+    .locationHead { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+    .mapControls { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; margin-top:12px; }
+    .mapControls label { flex:1 1 150px; margin:0 !important; }
+    .mapControls .authInput { width:100% !important; min-width:0; }
+    @media (max-width: 640px) {
+      #clinicMap { height:300px; }
+      .locCard { overflow:hidden; }
+      .locationHead { display:grid; gap:12px; }
+      .locationHead .btn { width:100%; text-align:center; }
+      .mapControls { display:grid; grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body>
@@ -49,7 +59,7 @@ $zoom = (int)get_setting($conn, 'clinic_map_zoom', 15);
   <div class="pageHead"><h1 class="pageHead__title">Location &amp; Map</h1></div>
 
   <section class="card locCard">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="locationHead">
       <div>
         <h2 style="margin:0;"><?php echo h($clinic_name); ?></h2>
         <div style="color:#666; margin-top:6px;"><?php echo nl2br(h($clinic_address)); ?></div>

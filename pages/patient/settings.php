@@ -34,7 +34,8 @@ function table_has_column(mysqli $conn, string $table, string $column): bool {
     return (int)($row['c'] ?? 0) > 0;
 }
 
-$hasContact = table_has_column($conn, 'users', 'contact');
+$contactColumn = table_has_column($conn, 'users', 'phone') ? 'phone' : (table_has_column($conn, 'users', 'contact') ? 'contact' : '');
+$hasContact = $contactColumn !== '';
 
 $uid = $user['id'];
 $flash = '';
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contact = trim($_POST['contact'] ?? '');
 
     if ($hasContact) {
-      $stmt = $conn->prepare("UPDATE users SET name = ?, contact = ? WHERE id = ?");
+      $stmt = $conn->prepare("UPDATE users SET name = ?, {$contactColumn} = ? WHERE id = ?");
       $stmt->bind_param("ssi", $name, $contact, $uid);
     } else {
       // contact column missing — update only name
@@ -63,29 +64,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $flash = "New password and confirmation do not match.";
     } else {
       // verify current password
-      $s = $conn->prepare("SELECT password FROM users WHERE id = ? LIMIT 1");
+      $s = $conn->prepare("SELECT password_hash FROM users WHERE id = ? LIMIT 1");
       $s->bind_param("i", $uid);
       $s->execute();
       $row = $s->get_result()->fetch_assoc();
-      $hash = $row['password'] ?? '';
+      $hash = $row['password_hash'] ?? '';
       if (!password_verify($current, $hash)) {
         $flash = "Current password is incorrect.";
       } else {
         $newhash = password_hash($new, PASSWORD_DEFAULT);
-        $u = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $u = $conn->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
         $u->bind_param("si", $newhash, $uid);
         $u->execute();
         $flash = "Password updated.";
       }
     }
   }
-  header("Location: pages/patient/settings.php?msg=" . urlencode($flash));
+  header("Location: /pages/patient/settings.php?msg=" . urlencode($flash));
   exit;
 }
 
 // load profile (select contact only if column exists)
 if ($hasContact) {
-  $stmt = $conn->prepare("SELECT id, name, email, contact FROM users WHERE id = ? LIMIT 1");
+  $stmt = $conn->prepare("SELECT id, name, email, {$contactColumn} AS contact FROM users WHERE id = ? LIMIT 1");
 } else {
   $stmt = $conn->prepare("SELECT id, name, email FROM users WHERE id = ? LIMIT 1");
 }
@@ -136,13 +137,22 @@ $msg = $_GET['msg'] ?? '';
     <form method="post" style="max-width:720px;">
       <input type="hidden" name="action" value="password">
       <label>Current password
-        <input class="authInput" type="password" name="current_password" required>
+        <span class="passwordField">
+          <input class="authInput" type="password" name="current_password" required>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
+        </span>
       </label>
       <label>New password
-        <input class="authInput" type="password" name="new_password" required>
+        <span class="passwordField">
+          <input class="authInput" type="password" name="new_password" required>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
+        </span>
       </label>
       <label>Confirm new password
-        <input class="authInput" type="password" name="confirm_password" required>
+        <span class="passwordField">
+          <input class="authInput" type="password" name="confirm_password" required>
+          <button class="passwordToggle" type="button" aria-label="Show password" data-password-toggle>&#128065;</button>
+        </span>
       </label>
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
         <button class="btn btn--dark" type="submit">Change password</button>
@@ -151,5 +161,16 @@ $msg = $_GET['msg'] ?? '';
   </section>
 
 </main>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+});
+</script>
 </body>
 </html>
