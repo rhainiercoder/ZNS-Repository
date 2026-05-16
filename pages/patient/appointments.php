@@ -7,6 +7,18 @@ $role = $user["role"];
 $active = "appointments";
 
 function h($v){ return htmlspecialchars((string)$v); }
+date_default_timezone_set('Asia/Manila');
+
+function appointment_hour_options(): array {
+  $options = [];
+  for ($hour = 8; $hour <= 18; $hour++) {
+    $value = sprintf('%02d:00', $hour);
+    $options[$value] = date('g:00 A', strtotime($value));
+  }
+  return $options;
+}
+
+$appointmentHourOptions = appointment_hour_options();
 
 $errors = [];
 $success = "";
@@ -71,21 +83,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && empty($_POST["action"])) {
   }
 
   if (!$errors) {
-    date_default_timezone_set('Asia/Manila');
-
-    $bufferMinutes = 15;
     $today = date('Y-m-d');
+    $validTimes = array_keys($appointmentHourOptions);
 
     if ($date < $today) {
       $errors[] = "You cannot book an appointment in the past.";
+    } elseif (!in_array($time, $validTimes, true)) {
+      $errors[] = "Please choose an appointment time between 8:00 AM and 6:00 PM.";
     } else {
       $apptTs = strtotime($date . ' ' . $time);
-      $minTs = time() + ($bufferMinutes * 60);
+      $nowTs = time();
 
       if ($apptTs === false) {
         $errors[] = "Invalid appointment date/time.";
-      } elseif ($date === $today && $apptTs <= $minTs) {
-        $errors[] = "For today, please choose a time at least {$bufferMinutes} minutes from now.";
+      } elseif ($date === $today && $apptTs <= $nowTs) {
+        $errors[] = "For today, please choose a time that has not already passed.";
       } elseif ((int)date('w', $apptTs) === 0) {
         $errors[] = "Sunday is off duty. Please choose another day.";
       }
@@ -188,8 +200,13 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         <label>
           <div style="font-weight:900; color:#0b2f4f; margin-bottom:6px;">Time</div>
-          <input type="time" id="apptTime" name="appointment_time" required
+          <select id="apptTime" name="appointment_time" required
             style="width:100%; padding:10px; border-radius:12px; border:1px solid rgba(11,31,42,.15);">
+            <option value="">-- Choose a time --</option>
+            <?php foreach ($appointmentHourOptions as $value => $label): ?>
+              <option value="<?php echo h($value); ?>"><?php echo h($label); ?></option>
+            <?php endforeach; ?>
+          </select>
         </label>
       </div>
 
@@ -252,8 +269,6 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
   const t = document.getElementById('apptTime');
   if (!d || !t) return;
 
-  const BUFFER_MINUTES = 15;
-
   function pad(n){ return String(n).padStart(2,'0'); }
 
   function todayStr() {
@@ -261,26 +276,23 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`;
   }
 
-  function nowPlusBufferHM() {
-    const x = new Date();
-    x.setMinutes(x.getMinutes() + BUFFER_MINUTES);
-    return `${pad(x.getHours())}:${pad(x.getMinutes())}`;
-  }
+  function updateTimeOptions() {
+    const now = new Date();
+    const isToday = d.value === todayStr();
 
-  function updateMinTime() {
-    if (d.value === todayStr()) {
-      t.min = nowPlusBufferHM();
-    } else {
-      t.min = "";
-    }
+    Array.from(t.options).forEach((option) => {
+      if (!option.value) return;
+      const optionDate = new Date(`${d.value || todayStr()}T${option.value}:00`);
+      option.disabled = isToday && optionDate <= now;
+    });
 
-    if (t.value && t.min && t.value < t.min) {
-      t.value = "";
+    if (t.selectedOptions[0] && t.selectedOptions[0].disabled) {
+      t.value = '';
     }
   }
 
-  d.addEventListener('change', updateMinTime);
-  updateMinTime();
+  d.addEventListener('change', updateTimeOptions);
+  updateTimeOptions();
 })();
 </script>
 </main>

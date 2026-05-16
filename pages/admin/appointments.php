@@ -6,6 +6,34 @@ $active = "appointments";
 
 require_once __DIR__ . "/../../db.php";
 function h($v){ return htmlspecialchars((string)$v); }
+function appointment_weekday(string $date): int {
+  return (int)date('N', strtotime($date));
+}
+
+function dentist_available_for_appointment(array $availabilityMap, int $dentistId, string $date, string $time): bool {
+  if (empty($availabilityMap)) return true;
+
+  $weekday = appointment_weekday($date);
+  $apptTime = substr($time, 0, 5);
+
+  foreach ($availabilityMap[$dentistId] ?? [] as $slot) {
+    if ((int)$slot['day'] !== $weekday) continue;
+
+    $start = substr((string)$slot['start_time'], 0, 5);
+    $end = substr((string)$slot['end_time'], 0, 5);
+    if ($start === '' || $end === '') return true;
+    if ($apptTime >= $start && $apptTime <= $end) return true;
+  }
+
+  return false;
+}
+
+function appointments_redirect(?int $patientId = null, string $err = ""): string {
+  $params = [];
+  if ($patientId) $params['patient_id'] = $patientId;
+  if ($err !== "") $params['err'] = $err;
+  return "/pages/admin/appointments.php" . ($params ? "?" . http_build_query($params) : "");
+}
 
 $patient_id = (int)($_GET['patient_id'] ?? 0);
 
@@ -21,17 +49,21 @@ $dentists = $conn->query("
 $dentistById = [];
 foreach ($dentists as $d) $dentistById[(int)$d["id"]] = $d;
 
-// Load dentist availability (if table exists). Map: dentist_id => [day1, day2...]
+// Load dentist availability (if table exists). Map: dentist_id => availability slots.
 // If the table is missing or empty we leave $availabilityMap empty which will be treated as "no filtering".
 $availabilityMap = [];
 try {
-  $res = $conn->query("SELECT dentist_id, `day` FROM dentist_availability");
+  $res = $conn->query("SELECT dentist_id, `day`, start_time, end_time FROM dentist_availability");
   if ($res) {
     while ($r = $res->fetch_assoc()) {
       $did = (int)$r['dentist_id'];
       $day = (int)$r['day'];
       if ($did && $day >= 1 && $day <= 7) {
-        $availabilityMap[$did][] = $day;
+        $availabilityMap[$did][] = [
+          'day' => $day,
+          'start_time' => $r['start_time'] ?? '',
+          'end_time' => $r['end_time'] ?? '',
+        ];
       }
     }
   }
@@ -48,13 +80,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($action === "approve") {
       $dentist_id = (int)($_POST["dentist_id"] ?? 0);
       if ($dentist_id <= 0) {
-        // simple fail-safe: redirect with no change
-        $redirect = "/pages/admin/appointments.php";
-          if (!empty($_POST["patient_id"])) {
-            $redirect .= "?patient_id=" . (int)$_POST["patient_id"];
-          }
-          header("Location: " . $redirect);
-          exit;
+        header("Location: " . appointments_redirect((int)($_POST["patient_id"] ?? 0), "choose_dentist"));
+        exit;
+      }
+      if (!isset($dentistById[$dentist_id])) {
+        header("Location: " . appointments_redirect((int)($_POST["patient_id"] ?? 0), "choose_dentist"));
+        exit;
+      }
+
+      $stmt = $conn->prepare("SELECT appointment_date, appointment_time FROM appointments WHERE id = ? LIMIT 1");
+      $stmt->bind_param("i", $id);
+      $stmt->execute();
+      $appointment = $stmt->get_result()->fetch_assoc();
+
+      if (!$appointment || !dentist_available_for_appointment($availabilityMap, $dentist_id, $appointment['appointment_date'], $appointment['appointment_time'])) {
+        header("Location: " . appointments_redirect((int)($_POST["patient_id"] ?? 0), "dentist_unavailable"));
+        exit;
       }
 
       $stmt = $conn->prepare("UPDATE appointments SET status='approved', dentist_id=? WHERE id=?");
@@ -63,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
       $reason = trim($_POST["decline_reason"] ?? "");
     if ($reason === "") {
-      header("Location: /pages/admin/appointments.php?err=decline_reason_required");
+      header("Location: " . appointments_redirect((int)($_POST["patient_id"] ?? 0), "decline_reason_required"));
       exit;
     }
     $now = date('Y-m-d H:i:s');
@@ -73,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
-  header("Location: /pages/admin/appointments.php");
+  header("Location: " . appointments_redirect((int)($_POST["patient_id"] ?? 0)));
   exit;
 }
 
@@ -160,6 +201,12 @@ $err = $_GET["err"] ?? "";
   </div>
   <?php endif; ?>
 
+  <?php if ($err === "dentist_unavailable"): ?>
+  <div class="card" style="background:#ffe9e9; margin-bottom:12px; font-weight:800;">
+    Please choose a dentist who is available on the booked appointment day and time.
+  </div>
+  <?php endif; ?>
+
   <section class="card" style="background:#e9f7ff;">
   <?php if ($patient_id === 0): ?>
 
@@ -233,23 +280,14 @@ $err = $_GET["err"] ?? "";
               <!-- YOUR ORIGINAL APPROVE/DECLINE FORM (UNCHANGED) -->
               <form method="post" style="display:flex; gap:8px; justify-content:flex-end; align-items:center; flex-wrap:wrap;">
                 <input type="hidden" name="id" value="<?php echo (int)$r["id"]; ?>">
+                <input type="hidden" name="patient_id" value="<?php echo (int)$patient_id; ?>">
 
                 <?php
-                  $weekday = (int)date('N', strtotime($r['appointment_date']));
-
                   $available = [];
-                  $unavailable = [];
                   foreach ($dentists as $d) {
                     $did = (int)$d['id'];
-                    if (empty($availabilityMap)) {
+                    if (dentist_available_for_appointment($availabilityMap, $did, $r['appointment_date'], $r['appointment_time'])) {
                       $available[] = $d;
-                    } else {
-                      $days = $availabilityMap[$did] ?? [];
-                      if (in_array($weekday, $days, true)) {
-                        $available[] = $d;
-                      } else {
-                        $unavailable[] = $d;
-                      }
                     }
                   }
                 ?>
@@ -259,25 +297,15 @@ $err = $_GET["err"] ?? "";
                   <option value="">Choose dentist</option>
 
                   <?php if ($available): ?>
-                    <optgroup label="Available">
+                    <optgroup label="Available for this appointment">
                       <?php foreach ($available as $d): ?>
                         <option value="<?php echo (int)$d["id"]; ?>">
                           <?php echo h($d["name"]); ?>
                         </option>
                       <?php endforeach; ?>
                     </optgroup>
-                  <?php endif; ?>
-
-                  <?php if (!empty($availabilityMap)): ?>
-                    <?php if ($unavailable): ?>
-                      <optgroup label="Off duty">
-                        <?php foreach ($unavailable as $d): ?>
-                          <option value="<?php echo (int)$d["id"]; ?>">
-                            <?php echo h($d["name"]); ?> (off today)
-                          </option>
-                        <?php endforeach; ?>
-                      </optgroup>
-                    <?php endif; ?>
+                  <?php else: ?>
+                    <option value="" disabled>No available dentists</option>
                   <?php endif; ?>
                 </select>
 

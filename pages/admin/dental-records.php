@@ -132,10 +132,10 @@ $patient_id = (int)($_GET['patient_id'] ?? 0);
                 <div style="font-weight:900; color:#0b2f4f;"><?php echo h($r['service'] ?: ''); ?></div>
                 <div style="font-size:13px; color:#6f7b86;">Dentist: <?php echo h($r['dentist_name'] ?: '—'); ?></div>
                 <?php if (!empty($r['diagnosis'])): ?>
-                  <div style="margin-top:8px; font-weight:800;">Dx: <?php echo nl2br(h($r['diagnosis'])); ?></div>
+                  <div style="margin-top:8px; font-weight:800;">Diagnosis: <?php echo nl2br(h($r['diagnosis'])); ?></div>
                 <?php endif; ?>
                 <?php if (!empty($r['treatment'])): ?>
-                  <div style="margin-top:8px; font-weight:800;">Tx: <?php echo nl2br(h($r['treatment'])); ?></div>
+                  <div style="margin-top:8px; font-weight:800;">Treatment: <?php echo nl2br(h($r['treatment'])); ?></div>
                 <?php endif; ?>
                 <?php if (!empty($r['prescription'])): ?>
                   <div style="margin-top:8px; font-weight:800;">Prescription: <?php echo nl2br(h($r['prescription'])); ?></div>

@@ -71,11 +71,11 @@ $view = $_GET['view'] ?? '';
                 <div style="font-size:13px; color:#6f7b86;">Dentist: <?php echo h($r['dentist_name'] ?: '—'); ?></div>
 
                 <?php if (!empty($r['diagnosis'])): ?>
-                  <div style="margin-top:8px; font-weight:800;">Dx: <?php echo nl2br(h($r['diagnosis'])); ?></div>
+                  <div style="margin-top:8px; font-weight:800;">Diagnosis: <?php echo nl2br(h($r['diagnosis'])); ?></div>
                 <?php endif; ?>
 
                 <?php if (!empty($r['treatment'])): ?>
-                  <div style="margin-top:8px; font-weight:800;">Tx: <?php echo nl2br(h($r['treatment'])); ?></div>
+                  <div style="margin-top:8px; font-weight:800;">Treatment: <?php echo nl2br(h($r['treatment'])); ?></div>
                 <?php endif; ?>
 
                 <?php if (!empty($r['prescription'])): ?>
@@ -149,11 +149,11 @@ $view = $_GET['view'] ?? '';
                 <div style="font-size:12px; font-weight:900; opacity:.75;">Dentist: <?php echo h($r["dentist_name"] ?: "—"); ?></div>
 
                 <?php if (!empty($r["diagnosis"])): ?>
-                  <div style="margin-top:6px; font-weight:800; opacity:.75;">Dx: <?php echo h($r["diagnosis"]); ?></div>
+                  <div style="margin-top:6px; font-weight:800; opacity:.75;">Diagnosis: <?php echo h($r["diagnosis"]); ?></div>
                 <?php endif; ?>
 
                 <?php if (!empty($r["treatment"])): ?>
-                  <div style="margin-top:6px; font-weight:800; opacity:.75;">Tx: <?php echo h($r["treatment"]); ?></div>
+                  <div style="margin-top:6px; font-weight:800; opacity:.75;">Treatment: <?php echo h($r["treatment"]); ?></div>
                 <?php endif; ?>
               </div>
 

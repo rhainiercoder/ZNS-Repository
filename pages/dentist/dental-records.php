@@ -458,10 +458,10 @@ if ($patient_id > 0) {
                 <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Teeth:</b> <?php echo h($r["tooth_no"]); ?></div>
               <?php endif; ?>
               <?php if (!empty($r["diagnosis"])): ?>
-                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Dx:</b> <?php echo h($r["diagnosis"]); ?></div>
+                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Diagnosis:</b> <?php echo h($r["diagnosis"]); ?></div>
               <?php endif; ?>
               <?php if (!empty($r["treatment"])): ?>
-                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Tx:</b> <?php echo h($r["treatment"]); ?></div>
+                <div style="margin-top:6px; font-weight:800; opacity:.75;"><b>Treatment:</b> <?php echo h($r["treatment"]); ?></div>
               <?php endif; ?>
             </div>
             <div class="table__muted"><?php echo h($r["appointment_date"]); ?> <?php echo h(substr($r["appointment_time"],0,5)); ?></div>
