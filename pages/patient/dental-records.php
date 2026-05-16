@@ -5,6 +5,7 @@ require_once __DIR__ . "/../../db.php";
 
 $user = require_role(["patient"]);
 $role = $user["role"];
+$active = "records";
 $uid  = (int)$user["id"];
 
 function h($v){ return htmlspecialchars((string)$v); }

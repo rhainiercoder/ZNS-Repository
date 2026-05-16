@@ -67,6 +67,59 @@ $stmt->bind_param("i", $user["id"]);
 $stmt->execute();
 $recentRecords = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+// Pending appointment requests for notifications.
+$stmt = $conn->prepare("
+  SELECT
+    a.id,
+    a.appointment_date,
+    a.appointment_time,
+    s.name AS service
+  FROM appointments a
+  JOIN services s ON s.id = a.service_id
+  WHERE a.patient_id = ?
+    AND a.status = 'pending'
+  ORDER BY a.appointment_date ASC, a.appointment_time ASC
+  LIMIT 2
+");
+$stmt->bind_param("i", $user["id"]);
+$stmt->execute();
+$pendingAppointments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$notifications = [];
+if ($upcoming && (int)$upcoming["is_paid"] !== 1) {
+  $notifications[] = [
+    "title" => "Payment Needed",
+    "body" => "Pay your approved " . $upcoming["service"] . " appointment before treatment can be completed.",
+    "href" => "/pages/patient/payments.php",
+    "icon" => "PHP",
+  ];
+} elseif ($upcoming) {
+  $notifications[] = [
+    "title" => "Appointment Ready",
+    "body" => $upcoming["service"] . " is scheduled on " . $upcoming["appointment_date"] . " at " . substr($upcoming["appointment_time"], 0, 5) . ".",
+    "href" => "/pages/patient/appointments.php",
+    "icon" => "OK",
+  ];
+}
+
+foreach ($pendingAppointments as $pending) {
+  $notifications[] = [
+    "title" => "Awaiting Approval",
+    "body" => $pending["service"] . " request for " . $pending["appointment_date"] . " is still pending.",
+    "href" => "/pages/patient/appointments.php",
+    "icon" => "...",
+  ];
+}
+
+if ($recentRecords) {
+  $notifications[] = [
+    "title" => "Record Updated",
+    "body" => "Your latest dental record is available for " . ($recentRecords[0]["service"] ?: "your appointment") . ".",
+    "href" => "/pages/patient/dental-records.php",
+    "icon" => "DR",
+  ];
+}
+
 // Service name -> image file mapping (matches your assets/img/services folder)
 $serviceImgMap = [
   "Consultation" => "consultation.png",
@@ -241,21 +294,32 @@ $fallbackServiceImg = "teeth_icon.png";
         </div>
       </div>
 
-      <!-- Notifications (placeholder) -->
+      <!-- Notifications -->
       <div class="pCard">
         <h3 class="pSectionTitle">Notifications</h3>
+        <?php if ($notifications): ?>
+          <div class="pMiniList">
+            <?php foreach (array_slice($notifications, 0, 4) as $n): ?>
+              <a class="pMiniItem" href="<?php echo h($n["href"]); ?>" style="text-decoration:none;">
+                <div class="pServiceIcon" style="width:42px;height:42px;border-radius:14px;font-size:12px;font-weight:900;">
+                  <?php echo h($n["icon"]); ?>
+                </div>
+                <div>
+                  <b><?php echo h($n["title"]); ?></b>
+                  <small><?php echo h($n["body"]); ?></small>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        <?php else: ?>
         <div class="pMiniItem">
           <div class="pServiceIcon" style="width:42px;height:42px;border-radius:14px;">🔔</div>
           <div>
-            <?php if ($upcoming && (int)$upcoming["is_paid"] !== 1): ?>
-              <b>Payment Needed</b>
-              <small>Please pay your approved appointment so it can be completed after treatment.</small>
-            <?php else: ?>
-              <b>1 New Reminder</b>
-              <small>Your next appointment will appear here after approval.</small>
-            <?php endif; ?>
+            <b>All Clear</b>
+            <small>No appointments need your attention right now.</small>
           </div>
         </div>
+        <?php endif; ?>
       </div>
 
       <!-- Clinic location -->

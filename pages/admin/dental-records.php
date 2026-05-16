@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../auth.php';
 $user = require_role(["admin", "staff", "dentist"]);
 $role = $user["role"];
+$active = "records";
 
 require_once __DIR__ . '/../../db.php';
 
