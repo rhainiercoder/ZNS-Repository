@@ -247,7 +247,7 @@ $fallbackServiceImg = "teeth_icon.png";
               <div style="color:#15803d;">Payment status: Paid</div>
             <?php else: ?>
               <div style="color:#b42318;">Payment required before your appointment can be completed.</div>
-              <div>Amount due: â‚±<?php echo number_format((float)$upcoming["amount"], 2); ?></div>
+              <div>Amount due: PHP<?php echo number_format((float)$upcoming["amount"], 2); ?></div>
             <?php endif; ?>
           </div>
 
